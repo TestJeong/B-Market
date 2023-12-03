@@ -1,12 +1,15 @@
-package com.side.bmarket.domain.cart;
+package com.side.bmarket.domain.cart.entity;
 
 import com.side.bmarket.domain.prodcut.entity.Products;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @Entity
 @Getter
+@NoArgsConstructor
 public class CartItems {
     @Id
     @GeneratedValue
@@ -23,4 +26,12 @@ public class CartItems {
 
     @Column(name = "product_quantity")
     private int productQuantity;
+
+    @Builder
+    public CartItems(final Carts cart, final Products product, final int productQuantity) {
+        this.cart = cart;
+        this.product = product;
+        this.productQuantity = productQuantity;
+
+    }
 }
