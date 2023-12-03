@@ -1,6 +1,7 @@
-package com.side.bmarket.domain.cart;
+package com.side.bmarket.domain.cart.entity;
 
 
+import com.side.bmarket.domain.user.entity.User;
 import lombok.Getter;
 import org.hibernate.annotations.BatchSize;
 
@@ -19,4 +20,8 @@ public class Carts {
     @OneToMany(mappedBy = "cart")
     @BatchSize(size = 1000)
     private List<CartItems> cartItem = new ArrayList<>();
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 }
