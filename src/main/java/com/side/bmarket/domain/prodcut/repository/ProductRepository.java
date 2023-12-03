@@ -22,7 +22,7 @@ public class ProductRepository {
     }
 
     //    상품 세부 정보
-    public Products findByProductDetail(Long productID) {
+    public Products findOneProduct(Long productID) {
         return em.find(Products.class, productID);
     }
 

@@ -33,7 +33,7 @@ public class ProductService {
 
     }
 
-    public void getProductDetail(Long productID) {
-        productRepository.findByProductDetail(productID);
+    public Products getProduct(Long productID) {
+        return productRepository.findOneProduct(productID);
     }
 }
