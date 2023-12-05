@@ -21,6 +21,10 @@ public class CartRepository {
         return em.find(Carts.class, userID);
     }
 
+    public CartItems findByCartItem(Long cartItemID) {
+        return em.find(CartItems.class, cartItemID);
+    }
+
     public List<CartItems> findCartItemByCart(Long cartID) {
         return em.createQuery("select ci from CartItems ci where ci.cart.id = :cartID",
                         CartItems.class)
