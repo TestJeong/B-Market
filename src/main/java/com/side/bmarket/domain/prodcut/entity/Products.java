@@ -1,5 +1,6 @@
 package com.side.bmarket.domain.prodcut.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.side.bmarket.domain.category.entity.SubCategorys;
 import lombok.Getter;
 
@@ -28,6 +29,9 @@ public class Products {
 
     @Column(name = "discount_price")
     private int discountPrice;
+
+    @Column(name = "discount_rate")
+    private int discountRate;
 
     @Column(name = "quantity")
     private int quantity;

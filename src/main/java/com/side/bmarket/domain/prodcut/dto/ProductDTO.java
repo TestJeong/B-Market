@@ -11,6 +11,7 @@ public class ProductDTO {
         private Long id;
         private String productName;
         private int productPrice;
+        private int discountRate;
         private int discountPrice;
         private int quantity;
 
@@ -18,7 +19,8 @@ public class ProductDTO {
             this.id = product.getId();
             this.productName = product.getProductName();
             this.productPrice = product.getProductPrice();
-            this.discountPrice = product.getDiscountPrice();
+            this.discountRate = product.getDiscountRate();
+            this.discountPrice = product.getProductPrice() - product.getDiscountPrice();
             this.quantity = product.getQuantity();
         }
     }
