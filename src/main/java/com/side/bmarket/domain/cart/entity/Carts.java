@@ -2,7 +2,9 @@ package com.side.bmarket.domain.cart.entity;
 
 
 import com.side.bmarket.domain.user.entity.User;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
@@ -11,9 +13,10 @@ import java.util.List;
 
 @Getter
 @Entity
+@NoArgsConstructor
 public class Carts {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "cart_id")
     private Long id;
 
@@ -24,4 +27,10 @@ public class Carts {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+    @Builder
+    public Carts(List<CartItems> cartItem, User user) {
+        this.cartItem = cartItem;
+        this.user = user;
+    }
 }

@@ -12,7 +12,7 @@ import java.util.List;
 @Entity
 public class SubCategorys {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "sub_category_id")
     private Long id;
 
