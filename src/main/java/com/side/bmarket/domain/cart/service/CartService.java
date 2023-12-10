@@ -7,7 +7,8 @@ import com.side.bmarket.domain.cart.exception.NotFoundCartItemException;
 import com.side.bmarket.domain.cart.repository.CartItemRepository;
 import com.side.bmarket.domain.cart.repository.CartRepository;
 import com.side.bmarket.domain.prodcut.entity.Products;
-import com.side.bmarket.domain.prodcut.service.ProductService;
+import com.side.bmarket.domain.prodcut.exception.NotFoundProductException;
+import com.side.bmarket.domain.prodcut.repository.ProductRepository;
 import com.side.bmarket.domain.user.entity.Users;
 import com.side.bmarket.domain.user.exception.NotFoundUserException;
 import com.side.bmarket.domain.user.repository.UserRepository;
@@ -26,7 +27,7 @@ public class CartService {
     private final UserRepository userRepository;
     private final CartRepository cartRepository;
     private final CartItemRepository cartItemRepository;
-    private final ProductService productService;
+    private final ProductRepository productRepository;
 
     public void saveCartItem(Long userId, Long productID, int quantity) {
         Users user = userRepository.findById(userId)
@@ -39,7 +40,8 @@ public class CartService {
                                 .build())
                 );
 
-        Products product = productService.getProduct(productID);
+        Products product = productRepository.findById(productID)
+                .orElseThrow(() -> new NotFoundProductException("해당 상품이 없습니다"));
 
         Optional<CartItems> existingCartItem = cartItemRepository.findByCartIdAndProductId(cart.getId(), product.getId());
 
@@ -81,7 +83,6 @@ public class CartService {
     public void updateCartItemQuantity(Long cartItemID, int quantity) {
         CartItems cartItem = cartItemRepository.findById(cartItemID)
                 .orElseThrow(() -> new NotFoundCartItemException("해당 cartItem이 없습니다."));
-
         cartItem.updateQuantity(cartItem.getProductQuantity() + quantity);
     }
 
