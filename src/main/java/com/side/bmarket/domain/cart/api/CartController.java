@@ -26,7 +26,7 @@ public class CartController {
 
     @PostMapping("/cart-item")
     public ResponseEntity<ResponseEntityDto> addCartItem(@RequestBody SaveCartRequestDto requestDTO) {
-        cartService.saveCartItem(requestDTO.getProductID(), requestDTO.getQuantity());
+        cartService.saveCartItem(requestDTO.getUserId(), requestDTO.getProductID(), requestDTO.getQuantity());
         return ResponseEntity.ok()
                 .body(new ResponseEntityDto("장바구니에 상품을 추가하였습니다"));
     }
