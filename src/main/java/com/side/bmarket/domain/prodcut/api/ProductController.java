@@ -15,7 +15,7 @@ public class ProductController {
     private final ProductService productService;
 
     @GetMapping("/product")
-    public ProductByCategoryDTO.response getProduct(@RequestParam("productID") Long productID) {
-        return productService.getProductBySubcCategory(productID);
+    public ProductByCategoryDTO.response getProduct(@RequestParam("subCategoryID") Long subCategoryID) {
+        return productService.getProductBySubcCategory(subCategoryID);
     }
 }
