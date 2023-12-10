@@ -1,15 +1,12 @@
 package com.side.bmarket.domain.cart.entity;
 
 
-import com.side.bmarket.domain.user.entity.User;
+import com.side.bmarket.domain.user.entity.Users;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @Entity
@@ -20,17 +17,12 @@ public class Carts {
     @Column(name = "cart_id")
     private Long id;
 
-    @OneToMany(mappedBy = "cart")
-    @BatchSize(size = 1000)
-    private List<CartItems> cartItem = new ArrayList<>();
-
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private User user;
+    private Users users;
 
     @Builder
-    public Carts(List<CartItems> cartItem, User user) {
-        this.cartItem = cartItem;
-        this.user = user;
+    public Carts(Users users) {
+        this.users = users;
     }
 }

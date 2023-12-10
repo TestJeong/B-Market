@@ -8,6 +8,9 @@ import com.side.bmarket.domain.cart.repository.CartItemRepository;
 import com.side.bmarket.domain.cart.repository.CartRepository;
 import com.side.bmarket.domain.prodcut.entity.Products;
 import com.side.bmarket.domain.prodcut.service.ProductService;
+import com.side.bmarket.domain.user.entity.Users;
+import com.side.bmarket.domain.user.exception.NotFoundUserException;
+import com.side.bmarket.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,31 +23,39 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Transactional
 public class CartService {
+    private final UserRepository userRepository;
     private final CartRepository cartRepository;
     private final CartItemRepository cartItemRepository;
     private final ProductService productService;
 
-    public void saveCartItem(Long productID, int quantity) {
-        Carts cart = cartRepository.findByUserId(1L);
+    public void saveCartItem(Long userId, Long productID, int quantity) {
+        Users user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundUserException("해당 유저가 없습니다."));
+
+        Carts cart = cartRepository.findByUsersId(userId)
+                .orElseGet(() -> cartRepository.save(
+                        Carts.builder()
+                                .users(user)
+                                .build())
+                );
+
         Products product = productService.getProduct(productID);
-        List<CartItems> cartItemByCart = cartItemRepository.findByCartId(cart.getId());
 
-        Optional<Long> isValuePresent = cartItemByCart.stream()
-                .filter(cartItem -> cartItem.getProduct().getId().equals(productID))
-                .map(CartItems::getId)
-                .findFirst();
+        Optional<CartItems> existingCartItem = cartItemRepository.findByCartIdAndProductId(cart.getId(), product.getId());
 
-        if (isValuePresent.isPresent()) {
-            updateCartItemQuantity(isValuePresent.get(), quantity);
-        } else {
-            CartItems cartItem = CartItems.builder()
-                    .cart(cart)
-                    .product(product)
-                    .productQuantity(quantity)
-                    .build();
-            cartItemRepository.save(cartItem);
-        }
+        existingCartItem.ifPresentOrElse(
+                cartItem -> updateCartItemQuantity(cartItem.getId(), quantity),
+                () -> {
+                    CartItems newCartItem = CartItems.builder()
+                            .cart(cart)
+                            .product(product)
+                            .productQuantity(quantity)
+                            .build();
+                    cartItemRepository.save(newCartItem);
+                }
+        );
     }
+
 
     public void deleteCartItem(Long cartItemId) {
         CartItems cartItem = cartItemRepository.findById(cartItemId)
@@ -76,7 +87,9 @@ public class CartService {
 
     @Transactional(readOnly = true)
     public CartListResponseDto findCartItemByUser() {
-        Carts cart = cartRepository.findByUserId(1L);
+        Carts cart = cartRepository.findByUsersId(1L)
+                .orElseThrow(() -> new NotFoundUserException("해당 유저가 없습니다."));
+
         List<CartItems> byCartId = cartItemRepository.findByCartId(cart.getId());
 
         int totalPrice = calculateTotalPrice(cart.getId());
