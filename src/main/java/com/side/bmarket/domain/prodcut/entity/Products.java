@@ -2,12 +2,15 @@ package com.side.bmarket.domain.prodcut.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.side.bmarket.domain.category.entity.SubCategorys;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @Entity
 @Getter
+@NoArgsConstructor
 public class Products {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,5 +39,14 @@ public class Products {
     @Column(name = "quantity")
     private int quantity;
 
-
+    @Builder
+    public Products(SubCategorys subCategory, String productName, String productDescription, int productPrice, int discountPrice, int discountRate, int quantity) {
+        this.subCategory = subCategory;
+        this.productName = productName;
+        this.productDescription = productDescription;
+        this.productPrice = productPrice;
+        this.discountPrice = discountPrice;
+        this.discountRate = discountRate;
+        this.quantity = quantity;
+    }
 }

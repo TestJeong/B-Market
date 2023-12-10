@@ -1,7 +1,9 @@
 package com.side.bmarket.domain.category.entity;
 
 import com.side.bmarket.domain.prodcut.entity.Products;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
@@ -10,6 +12,7 @@ import java.util.List;
 
 @Getter
 @Entity
+@NoArgsConstructor
 public class SubCategorys {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,9 +25,14 @@ public class SubCategorys {
 
     @OneToMany(mappedBy = "subCategory")
     @BatchSize(size = 1000)
-    private List<Products> processe = new ArrayList<>();
+    private List<Products> product = new ArrayList<>();
 
     @Column(name = "sub_category_name")
     private String subCategoryName;
 
+    @Builder
+    public SubCategorys(Categorys category, String subCategoryName) {
+        this.category = category;
+        this.subCategoryName = subCategoryName;
+    }
 }
