@@ -27,6 +27,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.List;
 import java.util.Optional;
 
 
@@ -68,14 +70,10 @@ class CartServiceTest {
     @Test
     void saveCartItem() {
         // given
-        given(userRepository.findById(any())).willReturn(
-                Optional.ofNullable(user));
-        given(cartRepository.findByUsersId(any())).willReturn(
-                Optional.ofNullable(cart));
-        given(productRepository.findById(any())).willReturn(
-                Optional.ofNullable(product));
-        given(cartItemRepository.save(any())).willReturn(
-                cartItem);
+        given(userRepository.findById(any())).willReturn(Optional.ofNullable(user));
+        given(cartRepository.findByUsersId(any())).willReturn(Optional.ofNullable(cart));
+        given(productRepository.findById(any())).willReturn(Optional.ofNullable(product));
+        given(cartItemRepository.save(any())).willReturn(cartItem);
 
         // when
         cartService.saveCartItem(1L, 1L, 1);
@@ -88,14 +86,37 @@ class CartServiceTest {
     @Test
     void updateCartItemQuantity() {
         // given
-        given(cartItemRepository.findById(any())).willReturn(
-                Optional.ofNullable(cartItem));
+        given(cartItemRepository.findById(any())).willReturn(Optional.ofNullable(cartItem));
 
         // when
         cartService.updateCartItemQuantity(1L, 2);
 
         // then
         assertThat(cartItem.getProductQuantity()).isEqualTo(3);
+    }
+
+    @DisplayName("장바구니에 담긴 상품의 총 가격을 계산합니다.")
+    @Test
+    void calculateTotalPrice() {
+        // given
+        Products product1 = ProductFixture.createProduct(subCategory, "상품2", 1000, 100, 0, 0);
+        Products product2 = ProductFixture.createProduct(subCategory, "상품3", 1000, 100, 0, 0);
+        Products product3 = ProductFixture.createProduct(subCategory, "상품4", 1000, 100, 0, 0);
+
+        CartItems cartItem1 = CartItemFixture.createCartItem(cart, product1, 1);
+        CartItems cartItem2 = CartItemFixture.createCartItem(cart, product2, 1);
+        CartItems cartItem3 = CartItemFixture.createCartItem(cart, product3, 1);
+
+        List<CartItems> cartItemsList = List.of(cartItem1, cartItem2, cartItem3);
+
+
+        given(cartItemRepository.findByCartId(any())).willReturn(cartItemsList);
+
+        // when
+        int totalPrice = cartService.calculateTotalPrice(1L);
+
+        // then
+        assertThat(totalPrice).isEqualTo(2700);
     }
 
 
