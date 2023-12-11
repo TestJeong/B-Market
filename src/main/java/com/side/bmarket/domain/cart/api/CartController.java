@@ -7,6 +7,7 @@ import com.side.bmarket.domain.cart.dto.response.CartListResponseDto;
 import com.side.bmarket.domain.cart.service.CartService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,29 +20,26 @@ public class CartController {
     private final CartService cartService;
 
     @GetMapping("/my-cart")
-    public ResponseEntity<CartListResponseDto> getCartList() {
-        return ResponseEntity.ok()
-                .body(cartService.findCartItemByUser());
+    public ResponseEntityDto<CartListResponseDto> getCartList() {
+        return ResponseEntityDto.of(HttpStatus.OK, cartService.findCartItemByUser());
     }
 
     @PostMapping("/cart-item")
-    public ResponseEntity<ResponseEntityDto> addCartItem(@RequestBody SaveCartRequestDto requestDTO) {
+    public ResponseEntityDto<String> addCartItem(@RequestBody SaveCartRequestDto requestDTO) {
         cartService.saveCartItem(requestDTO.getUserId(), requestDTO.getProductID(), requestDTO.getQuantity());
-        return ResponseEntity.ok()
-                .body(new ResponseEntityDto("장바구니에 상품을 추가하였습니다"));
+        return ResponseEntityDto.of(HttpStatus.OK, "장바구니에 상품을 추가하였습니다");
     }
 
     @DeleteMapping("/cart-item")
-    public ResponseEntity<ResponseEntityDto> deleteCartItem(@RequestBody Long cartItemId) {
+    public ResponseEntityDto<String> deleteCartItem(@RequestBody Long cartItemId) {
         cartService.deleteCartItem(cartItemId);
-        return ResponseEntity.ok()
-                .body(new ResponseEntityDto("장바구니에서 상품을 삭제하였습니다"));
+        return ResponseEntityDto.of(HttpStatus.OK, "장바구니에서 상품을 삭제하였습니다");
     }
 
     @PatchMapping("/cart-item")
-    public ResponseEntity<ResponseEntityDto> updateQuantity(@RequestBody UpdateCartItemRequestDto params) {
+    public ResponseEntityDto<String> updateQuantity(@RequestBody UpdateCartItemRequestDto params) {
         cartService.updateCartItemQuantity(params.getCartItemId(), params.getQuantity());
-        return ResponseEntity.ok()
-                .body(new ResponseEntityDto("장바구니에서 해당 상품 수량을 업데이트하였습니다."));
+        return ResponseEntityDto.of(HttpStatus.OK, "장바구니에서 해당 상품 수량을 업데이트하였습니다.");
+
     }
 }
