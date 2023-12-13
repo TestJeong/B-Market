@@ -9,6 +9,7 @@ import com.side.bmarket.domain.prodcut.entity.Products;
 import com.side.bmarket.domain.prodcut.exception.NotFoundProductException;
 import com.side.bmarket.domain.prodcut.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -25,14 +26,14 @@ public class ProductService {
     private final ProductRepository productRepository;
 
     //    세부카테고리 기준 상품리스트 조회
-    public ProductListDto findProductBySubcCategory(Long subCategoryID) {
+    public ProductListDto findProductBySubcCategory(Long subCategoryID, int currentPage) {
         SubCategorys subCategory = categoryRepository.findBySubCategorys(subCategoryID);
-        List<Products> products = productRepository.findBySubCategoryId(subCategoryID);
+        Page<Products> products = productRepository.findBySubCategoryId(subCategoryID, PageRequest.of(currentPage, 10));
 
         List<ProductDto> productList = products.stream()
                 .map(ProductDto::new)
                 .collect(Collectors.toList());
-        return ProductListDto.of(subCategory.getId(), subCategory.getSubCategoryName(), productList);
+        return ProductListDto.of(subCategory.getId(), subCategory.getSubCategoryName(), currentPage, productList);
 
     }
 
@@ -44,13 +45,13 @@ public class ProductService {
     }
 
     //    상품 정렬
-    public ProductListDto findProductSort(SortType sortType) {
+    public ProductListDto findProductSort(SortType sortType, int currentPage) {
         Sort sortPolicy = applySortPolicy(sortType);
 
-        List<ProductDto> sort = productRepository.findAll(PageRequest.of(0, 10, sortPolicy)).stream()
+        List<ProductDto> sortProduct = productRepository.findAll(PageRequest.of(currentPage, 10, sortPolicy)).stream()
                 .map(ProductDto::new)
                 .collect(Collectors.toList());
-        return ProductListDto.of(1L, "정렬테스트", sort);
+        return ProductListDto.of(1L, "정렬테스트", currentPage, sortProduct);
     }
 
     //    정렬 정책
