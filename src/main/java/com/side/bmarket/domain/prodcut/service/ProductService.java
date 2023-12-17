@@ -25,7 +25,7 @@ public class ProductService {
     private final CategoryRepository categoryRepository;
     private final ProductRepository productRepository;
 
-    //    세부카테고리 기준 상품리스트 조회
+    // 세부카테고리 기준 상품리스트 조회
     public ProductListDto findProductBySubcCategory(Long subCategoryID, int currentPage) {
         SubCategorys subCategory = categoryRepository.findBySubCategorys(subCategoryID);
         Page<Products> products = productRepository.findBySubCategoryId(subCategoryID, PageRequest.of(currentPage, 10));
@@ -34,17 +34,16 @@ public class ProductService {
                 .map(ProductDto::new)
                 .collect(Collectors.toList());
         return ProductListDto.of(subCategory.getId(), subCategory.getSubCategoryName(), currentPage, productList);
-
     }
 
-    //    상품 상세 조회
+    // 상품 상세 조회
     public ProductDto findProductDetail(Long productID) {
         Products product = productRepository.findById(productID)
                 .orElseThrow(() -> new NotFoundProductException("해당 상품이 없습니다"));
         return ProductDto.of(product);
     }
 
-    //    상품 정렬
+    // 상품 정렬
     public ProductListDto findProductSort(SortType sortType, int currentPage) {
         Sort sortPolicy = applySortPolicy(sortType);
 
@@ -54,7 +53,7 @@ public class ProductService {
         return ProductListDto.of(1L, "정렬테스트", currentPage, sortProduct);
     }
 
-    //    정렬 정책
+    // 정렬 정책
     private Sort applySortPolicy(SortType sortType) {
         switch (sortType) {
             case LOW_PRICE:
