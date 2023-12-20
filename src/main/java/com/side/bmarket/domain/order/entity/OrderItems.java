@@ -2,6 +2,7 @@ package com.side.bmarket.domain.order.entity;
 
 import com.side.bmarket.domain.prodcut.entity.Products;
 import com.side.bmarket.domain.user.entity.Users;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -17,10 +18,6 @@ public class OrderItems {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private Users user;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id")
     private Orders order;
 
@@ -30,4 +27,10 @@ public class OrderItems {
 
     private int quantity;
 
+    @Builder
+    public OrderItems(Orders order, Products product, int quantity) {
+        this.order = order;
+        this.product = product;
+        this.quantity = quantity;
+    }
 }

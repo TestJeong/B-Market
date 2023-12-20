@@ -18,7 +18,7 @@ public class CartListResponseDto {
     public CartListResponseDto(int totalPrice, int totalQuantity, int deliveryFee, List<CartItemList> product) {
         this.totalPrice = totalPrice;
         this.totalQuantity = totalQuantity;
-        this.deliveryFee =deliveryFee;
+        this.deliveryFee = deliveryFee;
         this.product = product;
     }
 
