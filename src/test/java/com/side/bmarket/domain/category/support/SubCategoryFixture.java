@@ -4,10 +4,10 @@ import com.side.bmarket.domain.category.entity.Categorys;
 import com.side.bmarket.domain.category.entity.SubCategorys;
 
 public class SubCategoryFixture {
-    public static SubCategorys createSubCategory(Categorys category, String subCategoryName) {
+    public static SubCategorys createSubCategory() {
         return SubCategorys.builder()
-                .category(category)
-                .subCategoryName(subCategoryName)
+                .category(CategoryFixture.createCategory("대카테고리"))
+                .subCategoryName("서브 카테고리")
                 .build();
 
     }

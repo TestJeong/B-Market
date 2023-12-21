@@ -35,9 +35,6 @@ import java.util.Optional;
 @ExtendWith(MockitoExtension.class)
 class CartServiceTest {
     Users user;
-    Categorys category;
-    SubCategorys subCategory;
-    Products product;
     Carts cart;
     CartItems cartItem;
 
@@ -59,20 +56,19 @@ class CartServiceTest {
     @BeforeEach
     void setUp() {
         user = UserFixture.createUser("테스트1");
-        category = CategoryFixture.createCategory("카테고리1");
-        subCategory = SubCategoryFixture.createSubCategory(category, "서브카테고리1");
-        product = ProductFixture.createProduct(subCategory, "상품1", 1000, 100, 0, 0);
         cart = CartFixture.createCart(user);
-        cartItem = CartItemFixture.createCartItem(cart, product, 1);
     }
 
     @DisplayName("장바구니에 상품을 저장합니다.")
     @Test
     void saveCartItem() {
         // given
+        Products product1 = ProductFixture.createProduct("상품1", 1000, 100, 0, 0);
+        cartItem = CartItemFixture.createCartItem(cart, product1, 1);
+
         given(userRepository.findById(any())).willReturn(Optional.ofNullable(user));
         given(cartRepository.findByUsersId(any())).willReturn(Optional.ofNullable(cart));
-        given(productRepository.findById(any())).willReturn(Optional.ofNullable(product));
+        given(productRepository.findById(any())).willReturn(Optional.ofNullable(product1));
         given(cartItemRepository.save(any())).willReturn(cartItem);
 
         // when
@@ -86,6 +82,9 @@ class CartServiceTest {
     @Test
     void updateCartItemQuantity() {
         // given
+        Products product1 = ProductFixture.createProduct("상품1", 1000, 100, 0, 0);
+        cartItem = CartItemFixture.createCartItem(cart, product1, 1);
+
         given(cartItemRepository.findById(any())).willReturn(Optional.ofNullable(cartItem));
 
         // when
@@ -99,17 +98,15 @@ class CartServiceTest {
     @Test
     void calculateTotalPrice() {
         // given
-        Products product1 = ProductFixture.createProduct(subCategory, "상품2", 1000, 100, 0, 0);
-        Products product2 = ProductFixture.createProduct(subCategory, "상품3", 1000, 100, 0, 0);
-        Products product3 = ProductFixture.createProduct(subCategory, "상품4", 1000, 100, 0, 0);
+        Products product1 = ProductFixture.createProduct("상품2", 1000, 100, 0, 0);
+        Products product2 = ProductFixture.createProduct("상품3", 1000, 100, 0, 0);
+        Products product3 = ProductFixture.createProduct("상품4", 1000, 100, 0, 0);
 
         CartItems cartItem1 = CartItemFixture.createCartItem(cart, product1, 1);
         CartItems cartItem2 = CartItemFixture.createCartItem(cart, product2, 1);
         CartItems cartItem3 = CartItemFixture.createCartItem(cart, product3, 1);
 
         List<CartItems> cartItemsList = List.of(cartItem1, cartItem2, cartItem3);
-
-
         given(cartItemRepository.findByCartId(any())).willReturn(cartItemsList);
 
         // when
