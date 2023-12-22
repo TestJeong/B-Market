@@ -8,7 +8,6 @@ import com.side.bmarket.domain.order.entity.OrderStatus;
 import com.side.bmarket.domain.order.entity.Orders;
 import com.side.bmarket.domain.order.repository.OrderRepository;
 import com.side.bmarket.domain.prodcut.entity.Products;
-import com.side.bmarket.domain.prodcut.repository.ProductRepository;
 import com.side.bmarket.domain.user.entity.Users;
 import com.side.bmarket.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,25 +22,22 @@ import java.util.stream.Collectors;
 @Transactional
 public class OrderService {
     private final OrderRepository orderRepository;
-    private final ProductRepository productRepository;
     private final CartItemRepository cartItemRepository;
     private final UserRepository userRepository;
 
     // 주문 생성
     public void createOrder(List<Long> cartItemId, Long userId) {
         List<CartItems> cartItems = cartItemRepository.findByCartIdIn(cartItemId);
-        Users users = userRepository.findById(userId)
+        Users user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("유저 정보가 없습니다"));
 
         List<OrderItems> createOrderItem = createOrderItem(cartItemId);
 
-        // 총 가격 계산
         int totalPrice = calculateTotalPrice(cartItems);
-
-        // 총 가격 기준으로 배달비 계산
         int deliveryFee = calculateDeliveryFee(totalPrice);
 
         Orders order = Orders.builder()
+                .user(user)
                 .orderItems(createOrderItem)
                 .orderStatus(OrderStatus.PENDING)
                 .deliveryFee(deliveryFee)
@@ -55,12 +51,14 @@ public class OrderService {
     public List<OrderItems> createOrderItem(List<Long> cartItemId) {
         List<CartItems> cartItems = cartItemRepository.findByCartIdIn(cartItemId);
 
-        // 해당 상품의 재고가 충분한지 검증
         return cartItems.stream()
-                .map(i -> OrderItems.builder()
-                        .product(i.getProduct())
-                        .quantity(i.getProductQuantity())
-                        .build()
+                .map(i -> {
+                            verifyProductQunatity(i.getProduct(), i.getProductQuantity());
+                            return OrderItems.builder()
+                                    .product(i.getProduct())
+                                    .quantity(i.getProductQuantity())
+                                    .build();
+                        }
                 ).collect(Collectors.toList());
     }
 
@@ -72,7 +70,7 @@ public class OrderService {
     public void updateOrderStatus() {
     }
 
-    // 총 금액
+    // 총 금액 계산
     public int calculateTotalPrice(List<CartItems> cartItems) {
         return cartItems.stream()
                 .mapToInt(i -> (i.getProduct().getProductPrice() - i.getProduct().getDiscountPrice()) * i.getProductQuantity())
@@ -87,14 +85,8 @@ public class OrderService {
         else return 3000;
     }
 
-    // 재고 수량 확인 (검증)
-    private boolean verifyProductQunatity(Long productId, int quantity) {
-        Products product = productRepository.findById(productId)
-                .orElseThrow(() -> new RuntimeException(""));
-
-        if (product.getQuantity() < quantity) return false;
-        else return true;
-
+    // 주문 가능 수량 확인
+    private void verifyProductQunatity(Products product, int quantity) {
+        if (product.getQuantity() < quantity) throw new RuntimeException("재고 수량이 부족합니다.");
     }
-
 }
