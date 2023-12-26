@@ -7,9 +7,7 @@ import com.side.bmarket.domain.cart.support.CartFixture;
 import com.side.bmarket.domain.cart.support.CartItemFixture;
 import com.side.bmarket.domain.order.entity.OrderItems;
 import com.side.bmarket.domain.order.repository.OrderRepository;
-import com.side.bmarket.domain.order.support.OrderFixture;
 import com.side.bmarket.domain.prodcut.entity.Products;
-import com.side.bmarket.domain.prodcut.repository.ProductRepository;
 import com.side.bmarket.domain.product.support.ProductFixture;
 import com.side.bmarket.domain.user.entity.Users;
 import com.side.bmarket.domain.user.repository.UserRepository;
@@ -20,8 +18,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
@@ -40,12 +36,8 @@ class OrderServiceTest {
     Carts cart;
     CartItems cartItem;
 
-    @Spy
     @InjectMocks
     OrderService orderService;
-
-    @Mock
-    ProductRepository productRepository;
 
     @Mock
     CartItemRepository cartItemRepository;
@@ -113,6 +105,26 @@ class OrderServiceTest {
         assertThat(result.size()).isEqualTo(3);
     }
 
+    @DisplayName("주문 아이템을 생성 후 상품 갯수를 차감합니다.")
+    @Test
+    void decreaseQuantity() {
+        // given
+        Products product1 = ProductFixture.createProduct("상품2", 1000, 100, 0, 10);
+
+        CartItems cartItem1 = CartItemFixture.createCartItem(cart, product1, 2);
+
+        List<CartItems> cartItemsList = List.of(cartItem1);
+
+        given(cartItemRepository.findByCartIdIn(any())).willReturn(cartItemsList);
+
+        // when
+        List<Long> cartItemIdList = Arrays.asList(1L);
+        orderService.createOrderItem(cartItemIdList);
+
+        // then
+        assertThat(product1.getQuantity()).isEqualTo(8);
+    }
+
     @DisplayName("주문 아이템 생성중 상품 재고 수량이 부족하면 예외가 발생됩니다.")
     @Test
     void createOrderItemException() {
@@ -124,7 +136,7 @@ class OrderServiceTest {
         given(cartItemRepository.findByCartIdIn(any())).willReturn(cartItemsList);
 
         // when
-        List<Long> cartItemIdList = Arrays.asList(1L);
+        List<Long> cartItemIdList = List.of(1L);
 
         // then
         assertThatThrownBy(() ->

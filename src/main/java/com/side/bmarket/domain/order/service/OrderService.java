@@ -54,6 +54,7 @@ public class OrderService {
         return cartItems.stream()
                 .map(i -> {
                             verifyProductQunatity(i.getProduct(), i.getProductQuantity());
+                            i.getProduct().decreaseQuantity(i.getProductQuantity());
                             return OrderItems.builder()
                                     .product(i.getProduct())
                                     .quantity(i.getProductQuantity())
@@ -62,7 +63,11 @@ public class OrderService {
                 ).collect(Collectors.toList());
     }
 
-    // 주문 삭제
+    // 주문 내역
+    public void findOrderByUser() {
+    }
+
+    // 주문 취소
     public void deleteOrder() {
     }
 
