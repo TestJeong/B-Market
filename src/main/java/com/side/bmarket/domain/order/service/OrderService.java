@@ -19,13 +19,13 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class OrderService {
     private final OrderRepository orderRepository;
     private final CartItemRepository cartItemRepository;
     private final UserRepository userRepository;
 
     // 주문 생성
+    @Transactional
     public void createOrder(List<Long> cartItemId, Long userId) {
         List<CartItems> cartItems = cartItemRepository.findByCartIdIn(cartItemId);
         Users user = userRepository.findById(userId)
@@ -48,6 +48,7 @@ public class OrderService {
     }
 
     // 주문 아이템 생성
+    @Transactional
     public List<OrderItems> createOrderItem(List<Long> cartItemId) {
         List<CartItems> cartItems = cartItemRepository.findByCartIdIn(cartItemId);
 
@@ -64,11 +65,21 @@ public class OrderService {
     }
 
     // 주문 내역
-    public void findOrderByUser() {
+    @Transactional(readOnly = true)
+    public void findOrderByUser(Long userId) {
+        List<Orders> orders = orderRepository.findByUserId(userId);
     }
 
     // 주문 취소
-    public void deleteOrder() {
+    @Transactional
+    public void cancelOrder(Long orderId) {
+        Orders order = orderRepository.findById(orderId)
+                .orElseThrow();
+
+        order.updateOrderStatus(OrderStatus.CANCELED);
+        order.getOrderItems().forEach(
+                orderItems -> orderItems.getProduct().increaseQuantity(orderItems.getQuantity())
+        );
     }
 
     // 주문 상태 업데이트

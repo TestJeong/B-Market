@@ -41,4 +41,8 @@ public class Orders {
         this.deliveryFee = deliveryFee;
         this.orderStatus = orderStatus;
     }
+
+    public void updateOrderStatus(OrderStatus status) {
+        this.orderStatus = status;
+    }
 }
