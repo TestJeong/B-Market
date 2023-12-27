@@ -5,8 +5,11 @@ import com.side.bmarket.domain.cart.entity.Carts;
 import com.side.bmarket.domain.cart.repository.CartItemRepository;
 import com.side.bmarket.domain.cart.support.CartFixture;
 import com.side.bmarket.domain.cart.support.CartItemFixture;
+import com.side.bmarket.domain.order.dto.response.OrderHistoryListDto;
 import com.side.bmarket.domain.order.entity.OrderItems;
+import com.side.bmarket.domain.order.entity.Orders;
 import com.side.bmarket.domain.order.repository.OrderRepository;
+import com.side.bmarket.domain.order.support.OrderFixture;
 import com.side.bmarket.domain.prodcut.entity.Products;
 import com.side.bmarket.domain.product.support.ProductFixture;
 import com.side.bmarket.domain.user.entity.Users;
@@ -21,6 +24,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -145,4 +149,20 @@ class OrderServiceTest {
                 .isInstanceOf(RuntimeException.class)
                 .hasMessageContaining("재고 수량이 부족합니다.");
     }
+
+    @DisplayName("유저 아이디 기반으로 주문 내역을 불러옵니다.")
+    @Test
+    void findOrderByUser() {
+        // given
+       Orders order = OrderFixture.createOrder();
+       given(orderRepository.findByUserId(any())).willReturn(Collections.singletonList(order));
+
+        // when
+        List<OrderHistoryListDto> orderHistoryList = orderService.findOrderByUser(1L);
+
+        // then
+        assertThat(orderHistoryList.get(0).getName()).isEqualTo("상품1 외 1개");
+        assertThat(orderHistoryList.get(0).getTotalPrice()).isEqualTo(4500);
+    }
+
 }

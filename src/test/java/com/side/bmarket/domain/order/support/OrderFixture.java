@@ -14,7 +14,6 @@ public class OrderFixture {
         return Orders.builder()
                 .user(UserFixture.createUser("테스트 유저1"))
                 .orderItems(createOrderItem())
-                .deliveryFee(0)
                 .orderStatus(OrderStatus.PENDING)
                 .build();
     }
