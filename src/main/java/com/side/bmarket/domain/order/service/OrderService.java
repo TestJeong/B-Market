@@ -3,6 +3,7 @@ package com.side.bmarket.domain.order.service;
 
 import com.side.bmarket.domain.cart.entity.CartItems;
 import com.side.bmarket.domain.cart.repository.CartItemRepository;
+import com.side.bmarket.domain.order.dto.response.OrderHistoryListDto;
 import com.side.bmarket.domain.order.entity.OrderItems;
 import com.side.bmarket.domain.order.entity.OrderStatus;
 import com.side.bmarket.domain.order.entity.Orders;
@@ -27,24 +28,17 @@ public class OrderService {
     // 주문 생성
     @Transactional
     public void createOrder(List<Long> cartItemId, Long userId) {
-        List<CartItems> cartItems = cartItemRepository.findByCartIdIn(cartItemId);
         Users user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("유저 정보가 없습니다"));
 
         List<OrderItems> createOrderItem = createOrderItem(cartItemId);
-
-        int totalPrice = calculateTotalPrice(cartItems);
-        int deliveryFee = calculateDeliveryFee(totalPrice);
-
         Orders order = Orders.builder()
                 .user(user)
                 .orderItems(createOrderItem)
                 .orderStatus(OrderStatus.PENDING)
-                .deliveryFee(deliveryFee)
                 .build();
 
         orderRepository.save(order);
-
     }
 
     // 주문 아이템 생성
@@ -66,8 +60,15 @@ public class OrderService {
 
     // 주문 내역
     @Transactional(readOnly = true)
-    public void findOrderByUser(Long userId) {
-        List<Orders> orders = orderRepository.findByUserId(userId);
+    public List<OrderHistoryListDto> findOrderByUser(Long userId) {
+        return orderRepository.findByUserId(userId).stream()
+                .map((i) -> OrderHistoryListDto.builder()
+                        .orderId(i.getId())
+                        .name(i.getOrderName())
+                        .totalPrice(i.getOrderPrice())
+                        .orderStatus(i.getOrderStatus())
+                        .build())
+                .collect(Collectors.toList());
     }
 
     // 주문 취소
@@ -80,25 +81,6 @@ public class OrderService {
         order.getOrderItems().forEach(
                 orderItems -> orderItems.getProduct().increaseQuantity(orderItems.getQuantity())
         );
-    }
-
-    // 주문 상태 업데이트
-    public void updateOrderStatus() {
-    }
-
-    // 총 금액 계산
-    public int calculateTotalPrice(List<CartItems> cartItems) {
-        return cartItems.stream()
-                .mapToInt(i -> (i.getProduct().getProductPrice() - i.getProduct().getDiscountPrice()) * i.getProductQuantity())
-                .sum();
-    }
-
-    // 배달비 계산
-    public int calculateDeliveryFee(int totalPrice) {
-        int minimumPrice = 15000;
-
-        if (totalPrice > minimumPrice) return 0;
-        else return 3000;
     }
 
     // 주문 가능 수량 확인

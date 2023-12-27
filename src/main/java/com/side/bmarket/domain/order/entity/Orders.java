@@ -34,15 +34,49 @@ public class Orders {
     @Column(name = "order_status")
     private OrderStatus orderStatus;
 
+    @Column(name = "order_name")
+    private String orderName;
+
+    @Column(name = "order_price")
+    private int orderPrice;
+
     @Builder
-    public Orders(Users user, List<OrderItems> orderItems, int deliveryFee, OrderStatus orderStatus) {
+    public Orders(Users user, List<OrderItems> orderItems, OrderStatus orderStatus) {
         this.user = user;
         this.orderItems = orderItems;
-        this.deliveryFee = deliveryFee;
         this.orderStatus = orderStatus;
+        createOrderName();
+        calculateTotalPrice();
     }
 
     public void updateOrderStatus(OrderStatus status) {
         this.orderStatus = status;
+    }
+
+    public void createOrderName() {
+        String name = "";
+
+        if (orderItems.size() == 1) name = orderItems.get(0).getProduct().getProductName();
+        else name = orderItems.get(0).getProduct().getProductName() + " 외 " + (orderItems.size() - 1) + "개";
+
+        this.orderName = name;
+    }
+
+    public void calculateTotalPrice() {
+        int totalPrice = 0;
+
+        for (OrderItems orderItem : orderItems) {
+            totalPrice += orderItem.calculatePrice();
+        }
+        this.orderPrice = totalPrice;
+        this.deliveryFee = calculateDeliveryFee(totalPrice);
+
+    }
+
+    public int calculateDeliveryFee(int totalPrice) {
+        int minimumPrice = 15000;
+
+        if (totalPrice > minimumPrice) return 0;
+        else return 3000;
     }
 }

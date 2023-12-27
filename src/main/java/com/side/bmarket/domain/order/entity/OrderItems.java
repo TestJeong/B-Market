@@ -27,10 +27,17 @@ public class OrderItems {
 
     private int quantity;
 
+    private int price;
+
     @Builder
     public OrderItems(Orders order, Products product, int quantity) {
         this.order = order;
         this.product = product;
         this.quantity = quantity;
+        this.price = calculatePrice();
+    }
+
+    public int calculatePrice () {
+       return this.price = (product.getProductPrice() - product.getDiscountPrice()) * quantity;
     }
 }
