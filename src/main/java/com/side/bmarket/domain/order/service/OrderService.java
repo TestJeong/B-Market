@@ -12,6 +12,7 @@ import com.side.bmarket.domain.prodcut.entity.Products;
 import com.side.bmarket.domain.user.entity.Users;
 import com.side.bmarket.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class OrderService {
     private final OrderRepository orderRepository;
@@ -44,7 +46,7 @@ public class OrderService {
     // 주문 아이템 생성
     @Transactional
     public List<OrderItems> createOrderItem(List<Long> cartItemId) {
-        List<CartItems> cartItems = cartItemRepository.findByCartIdIn(cartItemId);
+        List<CartItems> cartItems = cartItemRepository.findByIdIn(cartItemId);
 
         return cartItems.stream()
                 .map(i -> {
