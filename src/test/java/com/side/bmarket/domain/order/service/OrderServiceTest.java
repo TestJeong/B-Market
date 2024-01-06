@@ -74,7 +74,7 @@ class OrderServiceTest {
         List<CartItems> cartItemsList = List.of(cartItem1, cartItem2, cartItem3);
 
         given(userRepository.findById(any())).willReturn(Optional.ofNullable(user));
-        given(cartItemRepository.findByCartIdIn(any())).willReturn(cartItemsList);
+        given(cartItemRepository.findByIdIn(any())).willReturn(cartItemsList);
 
         // when
         List<Long> cartItemIdList = Arrays.asList(1L, 2L, 3L);
@@ -99,7 +99,7 @@ class OrderServiceTest {
 
         List<CartItems> cartItemsList = List.of(cartItem1, cartItem2, cartItem3);
 
-        given(cartItemRepository.findByCartIdIn(any())).willReturn(cartItemsList);
+        given(cartItemRepository.findByIdIn(any())).willReturn(cartItemsList);
 
         // when
         List<Long> cartItemIdList = Arrays.asList(1L, 2L, 3L);
@@ -119,7 +119,7 @@ class OrderServiceTest {
 
         List<CartItems> cartItemsList = List.of(cartItem1);
 
-        given(cartItemRepository.findByCartIdIn(any())).willReturn(cartItemsList);
+        given(cartItemRepository.findByIdIn(any())).willReturn(cartItemsList);
 
         // when
         List<Long> cartItemIdList = Arrays.asList(1L);
@@ -137,7 +137,7 @@ class OrderServiceTest {
         CartItems cartItem1 = CartItemFixture.createCartItem(cart, product1, 6);
         List<CartItems> cartItemsList = List.of(cartItem1);
 
-        given(cartItemRepository.findByCartIdIn(any())).willReturn(cartItemsList);
+        given(cartItemRepository.findByIdIn(any())).willReturn(cartItemsList);
 
         // when
         List<Long> cartItemIdList = List.of(1L);
