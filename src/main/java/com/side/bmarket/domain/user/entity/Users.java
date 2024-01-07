@@ -13,6 +13,12 @@ public class Users {
     @Column(name = "user_id")
     private Long id;
 
+    @Column(name = "user_email")
+    private String userEmail;
+
+    @Column(name = "user_password")
+    private String password;
+
     @Column(name = "user_nickname")
     private String nickname;
 

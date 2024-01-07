@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 public class CategoryController {
     private final CategoryService categoryService;
 
+//    카테고리 리스트 조회
     @GetMapping("/category")
     public List<CategoryDTO.response> getCategoryList() {
         List<Categorys> findAllCategory = categoryService.findAllCateogry();
@@ -26,6 +27,7 @@ public class CategoryController {
                 .collect(Collectors.toList());
     }
 
+//    서브 카테고리 조회
     @GetMapping("/subcategory")
     public List<SubCategoryDTO.response> getSubCategoryList(@RequestParam("categoryID") Long categoryID) {
         List<SubCategorys> getSubCategory = categoryService.findBySubCategory(categoryID);

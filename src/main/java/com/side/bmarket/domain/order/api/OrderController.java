@@ -37,6 +37,4 @@ public class OrderController {
     public List<OrderHistoryListDto> getOrderList() {
         return orderService.findOrderByUser(1L);
     }
-
-
 }
