@@ -26,4 +26,6 @@ public class Users {
     public Users(String nickname) {
         this.nickname = nickname;
     }
+
+
 }
