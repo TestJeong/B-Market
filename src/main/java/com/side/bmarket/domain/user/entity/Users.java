@@ -23,9 +23,9 @@ public class Users {
     private String nickname;
 
     @Builder
-    public Users(String nickname) {
+    public Users(String userEmail, String password, String nickname) {
+        this.userEmail = userEmail;
+        this.password = password;
         this.nickname = nickname;
     }
-
-
 }

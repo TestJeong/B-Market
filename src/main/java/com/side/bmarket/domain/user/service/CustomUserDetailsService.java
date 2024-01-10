@@ -3,6 +3,7 @@ package com.side.bmarket.domain.user.service;
 import com.side.bmarket.domain.user.entity.Users;
 import com.side.bmarket.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Collections;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
 
@@ -30,6 +32,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     // DB 에 User 값이 존재한다면 UserDetails 객체로 만들어서 리턴
     private UserDetails createUserDetails(Users user) {
+        log.info(("sadfasdfsdfsdfads"));
         GrantedAuthority grantedAuthority = new SimpleGrantedAuthority("USER");
         return new User(
                 String.valueOf(user.getId()),
