@@ -7,9 +7,12 @@ import com.side.bmarket.domain.order.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+import com.side.bmarket.common.config.SecurityUtil;
 
 @RestController
 @RequiredArgsConstructor
@@ -35,6 +38,6 @@ public class OrderController {
     // 주문 내역
     @GetMapping("/my-order")
     public List<OrderHistoryListDto> getOrderList() {
-        return orderService.findOrderByUser(1L);
+        return orderService.findOrderByUser(SecurityUtil.getCurrentMemberId());
     }
 }
