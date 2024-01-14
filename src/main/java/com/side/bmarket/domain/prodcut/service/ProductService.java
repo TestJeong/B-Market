@@ -9,6 +9,7 @@ import com.side.bmarket.domain.prodcut.entity.Products;
 import com.side.bmarket.domain.prodcut.exception.NotFoundProductException;
 import com.side.bmarket.domain.prodcut.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Slf4j
 public class ProductService {
     private final CategoryRepository categoryRepository;
     private final ProductRepository productRepository;
@@ -65,5 +67,33 @@ public class ProductService {
             default:
                 return Sort.by(Sort.Direction.ASC, "id");
         }
+    }
+
+    // 인기 상품 리스트
+    public ProductListDto findProductPopularList() {
+        Page<Products> products = productRepository.findAllByOrderByQuantityAsc(PageRequest.of(0, 10));
+
+        List<ProductDto> productList = products.stream()
+                .map(ProductDto::new)
+                .collect(Collectors.toList());
+
+        return ProductListDto.builder()
+                .product(productList)
+                .currentPage(1)
+                .build();
+    }
+
+    // 최대 할인 상품 리스트
+    public ProductListDto findProductMaxDiscount() {
+        Page<Products> products = productRepository.findAllByOrderByDiscountRateDesc(PageRequest.of(0, 10));
+
+        List<ProductDto> productList = products.stream()
+                .map(ProductDto::new)
+                .collect(Collectors.toList());
+
+        return ProductListDto.builder()
+                .product(productList)
+                .currentPage(1)
+                .build();
     }
 }

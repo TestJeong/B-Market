@@ -9,4 +9,8 @@ import java.util.List;
 
 public interface ProductRepository extends JpaRepository<Products, Long> {
     Page<Products> findBySubCategoryId(Long id, Pageable pageable);
+
+    Page<Products> findAllByOrderByQuantityAsc(Pageable pageable);
+
+    Page<Products> findAllByOrderByDiscountRateDesc(Pageable pageable);
 }

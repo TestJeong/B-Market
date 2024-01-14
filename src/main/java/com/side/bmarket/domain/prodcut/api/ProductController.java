@@ -40,6 +40,19 @@ public class ProductController {
 
     //    인기 상품 리스트
     @GetMapping("/popular-list")
-    public void getPopularProductList() {
+    public ResponseEntityDto<ProductListDto> getPopularProductList() {
+        return ResponseEntityDto.of(HttpStatus.OK, productService.findProductPopularList());
     }
+
+    //    추천 상품 리스트
+    @GetMapping("recommend-list")
+    public void getRecommendList() {
+    }
+
+    //    최대 할인 상품 리스트
+    @GetMapping("max-discount")
+    public ResponseEntityDto<ProductListDto> getMaxDiscountList() {
+        return ResponseEntityDto.of(HttpStatus.OK, productService.findProductMaxDiscount());
+    }
+
 }
