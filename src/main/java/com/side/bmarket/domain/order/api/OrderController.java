@@ -22,7 +22,7 @@ public class OrderController {
     // 주문 생성
     @PostMapping("/")
     public ResponseEntityDto<String> createOrder(@RequestBody CreateOrderRequestDto requestDto) {
-        orderService.createOrder(requestDto.getCartItemId(), requestDto.getUserId());
+        orderService.createOrder(requestDto.getCartItemId());
         return ResponseEntityDto.of(HttpStatus.OK, "주문을 생성 하였습니다");
     }
 

@@ -11,5 +11,4 @@ import java.util.List;
 @NoArgsConstructor
 public class CreateOrderRequestDto {
     private List<Long> cartItemId;
-    private Long userId;
 }

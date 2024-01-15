@@ -30,8 +30,8 @@ public class OrderService {
 
     // 주문 생성
     @Transactional
-    public void createOrder(List<Long> cartItemId, Long userId) {
-        Users user = userRepository.findById(userId)
+    public void createOrder(List<Long> cartItemId) {
+        Users user = userRepository.findById(SecurityUtil.getCurrentMemberId())
                 .orElseThrow(() -> new RuntimeException("유저 정보가 없습니다"));
 
         List<OrderItems> createOrderItem = createOrderItem(cartItemId);
