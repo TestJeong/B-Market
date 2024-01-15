@@ -51,7 +51,7 @@ public class LikeService {
         Products product = productRepository.findById(productID)
                 .orElseThrow(() -> new NotFoundProductException("해당 상품이 없습니다"));
 
-        Likes like = likeRepository.findByUserIdAndProductId(user.getId(), product.getId())
+        Likes like = likeRepository.findByUsersIdAndProductsId(user.getId(), product.getId())
                 .orElseThrow(() -> new RuntimeException("해당 정보가 없습니다"));
 
         likeRepository.delete(like);
@@ -63,7 +63,7 @@ public class LikeService {
         Users user = userRepository.findById(SecurityUtil.getCurrentMemberId())
                 .orElseThrow(() -> new RuntimeException("유저 정보가 없습니다"));
 
-        List<Likes> likesList = likeRepository.findByUserId(user.getId());
+        List<Likes> likesList = likeRepository.findByUsersId(user.getId());
 
         return likesList.stream()
                 .map((i) -> ProductDto.of(i.getProducts()))

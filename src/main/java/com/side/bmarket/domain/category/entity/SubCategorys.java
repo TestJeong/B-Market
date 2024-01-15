@@ -1,5 +1,6 @@
 package com.side.bmarket.domain.category.entity;
 
+import com.side.bmarket.common.BaseTimeEntity;
 import com.side.bmarket.domain.prodcut.entity.Products;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,7 +14,7 @@ import java.util.List;
 @Getter
 @Entity
 @NoArgsConstructor
-public class SubCategorys {
+public class SubCategorys extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "sub_category_id")

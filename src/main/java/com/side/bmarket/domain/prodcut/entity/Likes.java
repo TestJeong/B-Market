@@ -1,5 +1,6 @@
 package com.side.bmarket.domain.prodcut.entity;
 
+import com.side.bmarket.common.BaseTimeEntity;
 import com.side.bmarket.domain.user.entity.Users;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,7 +11,7 @@ import javax.persistence.*;
 @Entity
 @Getter
 @NoArgsConstructor
-public class Likes {
+public class Likes extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

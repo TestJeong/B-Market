@@ -1,5 +1,6 @@
 package com.side.bmarket.domain.order.entity;
 
+import com.side.bmarket.common.BaseTimeEntity;
 import com.side.bmarket.domain.prodcut.entity.Products;
 import com.side.bmarket.domain.user.entity.Users;
 import lombok.Builder;
@@ -11,7 +12,7 @@ import javax.persistence.*;
 @Entity
 @Getter
 @NoArgsConstructor
-public class OrderItems {
+public class OrderItems extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "order_item_id")

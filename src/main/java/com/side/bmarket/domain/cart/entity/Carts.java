@@ -1,6 +1,7 @@
 package com.side.bmarket.domain.cart.entity;
 
 
+import com.side.bmarket.common.BaseTimeEntity;
 import com.side.bmarket.domain.user.entity.Users;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,7 +12,7 @@ import javax.persistence.*;
 @Getter
 @Entity
 @NoArgsConstructor
-public class Carts {
+public class Carts extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "cart_id")

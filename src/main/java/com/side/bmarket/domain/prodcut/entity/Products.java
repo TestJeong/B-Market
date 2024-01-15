@@ -1,6 +1,7 @@
 package com.side.bmarket.domain.prodcut.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.side.bmarket.common.BaseTimeEntity;
 import com.side.bmarket.domain.category.entity.SubCategorys;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,7 +12,7 @@ import javax.persistence.*;
 @Entity
 @Getter
 @NoArgsConstructor
-public class Products {
+public class Products extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "product_id")
