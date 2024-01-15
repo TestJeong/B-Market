@@ -7,12 +7,12 @@ import lombok.Getter;
 @Getter
 public class ProductDto {
 
-    private Long id;
-    private String productName;
-    private int productPrice;
-    private int discountRate;
-    private int discountPrice;
-    private int quantity;
+    private final Long id;
+    private final String productName;
+    private final int productPrice;
+    private final int discountRate;
+    private final int discountPrice;
+    private final int quantity;
 
     public ProductDto(Products product) {
         this.id = product.getId();

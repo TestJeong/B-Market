@@ -1,5 +1,6 @@
 package com.side.bmarket.domain.cart.service;
 
+import com.side.bmarket.common.config.SecurityUtil;
 import com.side.bmarket.domain.cart.dto.response.CartListResponseDto;
 import com.side.bmarket.domain.cart.entity.CartItems;
 import com.side.bmarket.domain.cart.entity.Carts;
@@ -29,11 +30,12 @@ public class CartService {
     private final CartItemRepository cartItemRepository;
     private final ProductRepository productRepository;
 
-    public void saveCartItem(Long userId, Long productID, int quantity) {
-        Users user = userRepository.findById(userId)
+    //    장바구니에서 상품 저장
+    public void saveCartItem(Long productID, int quantity) {
+        Users user = userRepository.findById(SecurityUtil.getCurrentMemberId())
                 .orElseThrow(() -> new NotFoundUserException("해당 유저가 없습니다."));
 
-        Carts cart = cartRepository.findByUsersId(userId)
+        Carts cart = cartRepository.findByUsersId(SecurityUtil.getCurrentMemberId())
                 .orElseGet(() -> cartRepository.save(
                         Carts.builder()
                                 .users(user)
@@ -58,13 +60,14 @@ public class CartService {
         );
     }
 
-
+    // 장바구니에서 상품 삭제
     public void deleteCartItem(Long cartItemId) {
         CartItems cartItem = cartItemRepository.findById(cartItemId)
                 .orElseThrow(() -> new NotFoundCartItemException("해당 cartItem이 없습니다."));
         cartItemRepository.delete(cartItem);
     }
 
+    // 총 가격 계산
     public int calculateTotalPrice(Long cartId) {
         List<CartItems> cartList = cartItemRepository.findByCartId(cartId);
         return cartList.stream()
@@ -72,6 +75,7 @@ public class CartService {
                 .sum();
     }
 
+    // 배달비 계산
     private int calculateDeliveryFee(Long cartId) {
         int minimumPrice = 15000;
         int totalPrice = calculateTotalPrice(cartId);
@@ -80,15 +84,17 @@ public class CartService {
         else return 3000;
     }
 
+    // 장바구니에서 상품 수량 업데이트
     public void updateCartItemQuantity(Long cartItemID, int quantity) {
         CartItems cartItem = cartItemRepository.findById(cartItemID)
                 .orElseThrow(() -> new NotFoundCartItemException("해당 cartItem이 없습니다."));
         cartItem.updateQuantity(cartItem.getProductQuantity() + quantity);
     }
 
+    // 해당 유저 장바구니 리스트 요청
     @Transactional(readOnly = true)
     public CartListResponseDto findCartItemByUser() {
-        Carts cart = cartRepository.findByUsersId(1L)
+        Carts cart = cartRepository.findByUsersId(SecurityUtil.getCurrentMemberId())
                 .orElseThrow(() -> new NotFoundUserException("해당 유저가 없습니다."));
 
         List<CartItems> byCartId = cartItemRepository.findByCartId(cart.getId());

@@ -1,6 +1,7 @@
 package com.side.bmarket.domain.order.service;
 
 
+import com.side.bmarket.common.config.SecurityUtil;
 import com.side.bmarket.domain.cart.entity.CartItems;
 import com.side.bmarket.domain.cart.repository.CartItemRepository;
 import com.side.bmarket.domain.order.dto.response.OrderHistoryListDto;
@@ -62,8 +63,8 @@ public class OrderService {
 
     // 주문 내역
     @Transactional(readOnly = true)
-    public List<OrderHistoryListDto> findOrderByUser(Long userId) {
-        return orderRepository.findByUserId(userId).stream()
+    public List<OrderHistoryListDto> findOrderByUser() {
+        return orderRepository.findByUserId(SecurityUtil.getCurrentMemberId()).stream()
                 .map((i) -> OrderHistoryListDto.builder()
                         .orderId(i.getId())
                         .name(i.getOrderName())

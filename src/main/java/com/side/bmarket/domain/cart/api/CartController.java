@@ -1,5 +1,6 @@
 package com.side.bmarket.domain.cart.api;
 
+import com.side.bmarket.common.config.SecurityUtil;
 import com.side.bmarket.common.dto.ResponseEntityDto;
 import com.side.bmarket.domain.cart.dto.request.SaveCartRequestDto;
 import com.side.bmarket.domain.cart.dto.request.UpdateCartItemRequestDto;
@@ -18,27 +19,27 @@ import org.springframework.web.bind.annotation.*;
 public class CartController {
     private final CartService cartService;
 
-//    장바구니 리스트 조회
+    //    장바구니 리스트 조회
     @GetMapping("/my-cart")
     public ResponseEntityDto<CartListResponseDto> getCartList() {
         return ResponseEntityDto.of(HttpStatus.OK, cartService.findCartItemByUser());
     }
 
-//    장바구니에 아이템 추가
+    //    장바구니에 아이템 추가
     @PostMapping("/cart-item")
     public ResponseEntityDto<String> addCartItem(@RequestBody SaveCartRequestDto requestDTO) {
-        cartService.saveCartItem(requestDTO.getUserId(), requestDTO.getProductID(), requestDTO.getQuantity());
+        cartService.saveCartItem(requestDTO.getProductID(), requestDTO.getQuantity());
         return ResponseEntityDto.of(HttpStatus.OK, "장바구니에 상품을 추가하였습니다");
     }
 
-//    장바구니 아이템 삭제
+    //    장바구니 아이템 삭제
     @DeleteMapping("/cart-item")
     public ResponseEntityDto<String> deleteCartItem(@RequestBody Long cartItemId) {
         cartService.deleteCartItem(cartItemId);
         return ResponseEntityDto.of(HttpStatus.OK, "장바구니에서 상품을 삭제하였습니다");
     }
 
-//    장바구니 수량 업데이트
+    //    장바구니 수량 업데이트
     @PatchMapping("/cart-item")
     public ResponseEntityDto<String> updateQuantity(@RequestBody UpdateCartItemRequestDto params) {
         cartService.updateCartItemQuantity(params.getCartItemId(), params.getQuantity());
