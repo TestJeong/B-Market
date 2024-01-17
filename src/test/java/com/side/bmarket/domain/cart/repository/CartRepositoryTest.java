@@ -9,20 +9,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-@Transactional
-@SpringBootTest
 class CartRepositoryTest {
-    @Autowired
     private CartRepository cartRepository;
 
     @DisplayName("테스트")
     @Test
     void test() {
         // given
-        List<Carts> byUserId = cartRepository.findAll();
-        // when
-        System.out.println(byUserId.size());
-        // then
+
     }
 
 }

@@ -30,8 +30,8 @@ public class OrderService {
 
     // 주문 생성
     @Transactional
-    public void createOrder(List<Long> cartItemId) {
-        Users user = userRepository.findById(SecurityUtil.getCurrentMemberId())
+    public void createOrder(List<Long> cartItemId, Long userId) {
+        Users user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("유저 정보가 없습니다"));
 
         List<OrderItems> createOrderItem = createOrderItem(cartItemId);
@@ -63,8 +63,8 @@ public class OrderService {
 
     // 주문 내역
     @Transactional(readOnly = true)
-    public List<OrderHistoryListDto> findOrderByUser() {
-        return orderRepository.findByUserId(SecurityUtil.getCurrentMemberId()).stream()
+    public List<OrderHistoryListDto> findOrderByUser(Long userId) {
+        return orderRepository.findByUserId(userId).stream()
                 .map((i) -> OrderHistoryListDto.builder()
                         .orderId(i.getId())
                         .name(i.getOrderName())

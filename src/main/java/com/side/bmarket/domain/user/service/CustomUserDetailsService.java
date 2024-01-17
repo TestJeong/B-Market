@@ -32,7 +32,6 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     // DB 에 User 값이 존재한다면 UserDetails 객체로 만들어서 리턴
     private UserDetails createUserDetails(Users user) {
-        log.info(("sadfasdfsdfsdfads"));
         GrantedAuthority grantedAuthority = new SimpleGrantedAuthority("USER");
         return new User(
                 String.valueOf(user.getId()),

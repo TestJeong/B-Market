@@ -1,5 +1,6 @@
 package com.side.bmarket.domain.order.api;
 
+import com.side.bmarket.common.config.SecurityUtil;
 import com.side.bmarket.common.dto.ResponseEntityDto;
 import com.side.bmarket.domain.order.dto.request.CreateOrderRequestDto;
 import com.side.bmarket.domain.order.dto.response.OrderHistoryListDto;
@@ -22,7 +23,7 @@ public class OrderController {
     // 주문 생성
     @PostMapping("/")
     public ResponseEntityDto<String> createOrder(@RequestBody CreateOrderRequestDto requestDto) {
-        orderService.createOrder(requestDto.getCartItemId());
+        orderService.createOrder(requestDto.getCartItemId(), SecurityUtil.getCurrentMemberId());
         return ResponseEntityDto.of(HttpStatus.OK, "주문을 생성 하였습니다");
     }
 
@@ -36,6 +37,6 @@ public class OrderController {
     // 주문 내역
     @GetMapping("/my-order")
     public List<OrderHistoryListDto> getOrderList() {
-        return orderService.findOrderByUser();
+        return orderService.findOrderByUser(SecurityUtil.getCurrentMemberId());
     }
 }

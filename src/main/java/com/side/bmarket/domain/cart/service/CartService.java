@@ -31,11 +31,11 @@ public class CartService {
     private final ProductRepository productRepository;
 
     //    장바구니에서 상품 저장
-    public void saveCartItem(Long productID, int quantity) {
-        Users user = userRepository.findById(SecurityUtil.getCurrentMemberId())
+    public void saveCartItem(Long productID, Long userId, int quantity) {
+        Users user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundUserException("해당 유저가 없습니다."));
 
-        Carts cart = cartRepository.findByUsersId(SecurityUtil.getCurrentMemberId())
+        Carts cart = cartRepository.findByUsersId(userId)
                 .orElseGet(() -> cartRepository.save(
                         Carts.builder()
                                 .users(user)
