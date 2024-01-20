@@ -28,14 +28,14 @@ public class ProductService {
     private final ProductRepository productRepository;
 
     // 세부카테고리 기준 상품리스트 조회
-    public ProductListDto findProductBySubcCategory(Long subCategoryID, int currentPage) {
+    public ProductListDto findProductBySubCategory(Long subCategoryID, int currentPage) {
         SubCategorys subCategory = categoryRepository.findBySubCategorys(subCategoryID);
         Page<Products> products = productRepository.findBySubCategoryId(subCategoryID, PageRequest.of(currentPage, 10));
 
         List<ProductDto> productList = products.stream()
                 .map(ProductDto::new)
                 .collect(Collectors.toList());
-        return ProductListDto.of(subCategory.getId(), subCategory.getSubCategoryName(), currentPage, productList);
+        return ProductListDto.of(subCategory.getId(), subCategory.getSubCategoryName(), currentPage + 1, productList);
     }
 
     // 상품 상세 조회
@@ -52,7 +52,7 @@ public class ProductService {
         List<ProductDto> sortProduct = productRepository.findAll(PageRequest.of(currentPage, 10, sortPolicy)).stream()
                 .map(ProductDto::new)
                 .collect(Collectors.toList());
-        return ProductListDto.of(1L, "정렬테스트", currentPage, sortProduct);
+        return ProductListDto.of(1L, "정렬테스트", currentPage + 1, sortProduct);
     }
 
     // 정렬 정책

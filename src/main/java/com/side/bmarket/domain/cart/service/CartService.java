@@ -107,6 +107,7 @@ public class CartService {
                 .collect(Collectors.toList());
 
         return CartListResponseDto.builder()
+                .currentPage(0)
                 .totalPrice(totalPrice)
                 .totalQuantity(result.size())
                 .deliveryFee(deliveryFee)

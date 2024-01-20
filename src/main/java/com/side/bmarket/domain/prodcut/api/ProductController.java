@@ -22,7 +22,7 @@ public class ProductController {
     @GetMapping("/list")
     public ResponseEntityDto<ProductListDto> getProduct(@RequestParam("subCategoryId") Long subCategoryId,
                                                         @RequestParam("currentPage") int currentPage) {
-        return ResponseEntityDto.of(HttpStatus.OK, productService.findProductBySubcCategory(subCategoryId, currentPage));
+        return ResponseEntityDto.of(HttpStatus.OK, productService.findProductBySubCategory(subCategoryId, currentPage - 1));
     }
 
     //    상품 상세 조회
@@ -35,7 +35,7 @@ public class ProductController {
     @GetMapping("/sort")
     public ResponseEntityDto<ProductListDto> getProductSortList(@RequestParam("sortType") SortType sortType,
                                                                 @RequestParam("currentPage") int currentPage) {
-        return ResponseEntityDto.of(HttpStatus.OK, productService.findProductSort(sortType, currentPage));
+        return ResponseEntityDto.of(HttpStatus.OK, productService.findProductSort(sortType, currentPage - 1));
     }
 
     //    인기 상품 리스트
