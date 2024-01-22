@@ -10,8 +10,8 @@ import com.side.bmarket.domain.prodcut.exception.NotFoundProductException;
 import com.side.bmarket.domain.prodcut.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,12 +30,12 @@ public class ProductService {
     // 세부카테고리 기준 상품리스트 조회
     public ProductListDto findProductBySubCategory(Long subCategoryID, int currentPage) {
         SubCategorys subCategory = categoryRepository.findBySubCategorys(subCategoryID);
-        Page<Products> products = productRepository.findBySubCategoryId(subCategoryID, PageRequest.of(currentPage, 10));
+        Slice<Products> products = productRepository.findBySubCategoryId(subCategoryID, PageRequest.of(currentPage, 10));
 
         List<ProductDto> productList = products.stream()
                 .map(ProductDto::new)
                 .collect(Collectors.toList());
-        return ProductListDto.of(subCategory.getId(), subCategory.getSubCategoryName(), currentPage + 1, productList);
+        return ProductListDto.of(subCategory.getId(), subCategory.getSubCategoryName(), currentPage, productList);
     }
 
     // 상품 상세 조회
@@ -52,7 +52,7 @@ public class ProductService {
         List<ProductDto> sortProduct = productRepository.findAll(PageRequest.of(currentPage, 10, sortPolicy)).stream()
                 .map(ProductDto::new)
                 .collect(Collectors.toList());
-        return ProductListDto.of(1L, "정렬테스트", currentPage + 1, sortProduct);
+        return ProductListDto.of(1L, "정렬테스트", currentPage, sortProduct);
     }
 
     // 정렬 정책
@@ -71,7 +71,7 @@ public class ProductService {
 
     // 인기 상품 리스트
     public ProductListDto findProductPopularList() {
-        Page<Products> products = productRepository.findAllByOrderByQuantityAsc(PageRequest.of(0, 10));
+        Slice<Products> products = productRepository.findAllByOrderByQuantityAsc(PageRequest.of(0, 10));
 
         List<ProductDto> productList = products.stream()
                 .map(ProductDto::new)
@@ -79,13 +79,13 @@ public class ProductService {
 
         return ProductListDto.builder()
                 .product(productList)
-                .currentPage(1)
+                .currentPage(0)
                 .build();
     }
 
     // 최대 할인 상품 리스트
     public ProductListDto findProductMaxDiscount() {
-        Page<Products> products = productRepository.findAllByOrderByDiscountRateDesc(PageRequest.of(0, 10));
+        Slice<Products> products = productRepository.findAllByOrderByDiscountRateDesc(PageRequest.of(0, 10));
 
         List<ProductDto> productList = products.stream()
                 .map(ProductDto::new)
@@ -93,7 +93,7 @@ public class ProductService {
 
         return ProductListDto.builder()
                 .product(productList)
-                .currentPage(1)
+                .currentPage(0)
                 .build();
     }
 }
