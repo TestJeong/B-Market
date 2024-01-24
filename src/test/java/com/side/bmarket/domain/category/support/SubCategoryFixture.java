@@ -11,4 +11,12 @@ public class SubCategoryFixture {
                 .build();
 
     }
+
+    public static SubCategorys createSubCategoryName(String name) {
+        return SubCategorys.builder()
+                .category(CategoryFixture.createCategory("대카테고리"))
+                .subCategoryName(name)
+                .build();
+
+    }
 }

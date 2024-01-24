@@ -6,7 +6,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum SortType {
-
+    DEFAULT("DEFAULT"),
     LOW_PRICE("LOW_PRICE"),
     HIGH_PRICE("HIGH_PRICE"),
     HIGHT_DISCOUNT("HIGHT_DISCOUNT");
