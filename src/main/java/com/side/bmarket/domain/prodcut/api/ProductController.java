@@ -1,6 +1,7 @@
 package com.side.bmarket.domain.prodcut.api;
 
 import com.side.bmarket.common.dto.ResponseEntityDto;
+import com.side.bmarket.common.exception.CustomException;
 import com.side.bmarket.domain.prodcut.dto.SortType;
 import com.side.bmarket.domain.prodcut.dto.response.ProductDto;
 import com.side.bmarket.domain.prodcut.dto.response.ProductListDto;
@@ -23,7 +24,8 @@ public class ProductController {
     public ResponseEntityDto<ProductListDto> getProduct(@RequestParam("subCategoryId") Long subCategoryId,
                                                         @RequestParam(value = "sortType", required = false, defaultValue = "DEFAULT") SortType sortType,
                                                         @RequestParam("currentPage") int currentPage) {
-        return ResponseEntityDto.of(HttpStatus.OK, productService.findProductBySubCategory(subCategoryId, sortType, currentPage));
+//        return ResponseEntityDto.of(HttpStatus.OK, productService.findProductBySubCategory(subCategoryId, sortType, currentPage));
+     throw new CustomException(123);
     }
 
     //    상품 상세 조회
