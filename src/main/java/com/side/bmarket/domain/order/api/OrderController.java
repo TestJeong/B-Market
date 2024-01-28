@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 
@@ -22,7 +23,7 @@ public class OrderController {
 
     // 주문 생성
     @PostMapping("/")
-    public ResponseEntityDto<String> createOrder(@RequestBody CreateOrderRequestDto requestDto) {
+    public ResponseEntityDto<String> createOrder(@Valid @RequestBody CreateOrderRequestDto requestDto) {
         orderService.createOrder(requestDto.getCartItemId(), SecurityUtil.getCurrentMemberId());
         return ResponseEntityDto.of(HttpStatus.OK, "주문을 생성 하였습니다");
     }
