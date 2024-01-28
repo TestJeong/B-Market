@@ -8,6 +8,7 @@ import com.side.bmarket.domain.cart.support.CartItemFixture;
 import com.side.bmarket.domain.order.dto.response.OrderHistoryListDto;
 import com.side.bmarket.domain.order.entity.OrderItems;
 import com.side.bmarket.domain.order.entity.Orders;
+import com.side.bmarket.domain.order.exception.OutOfStockProductItemException;
 import com.side.bmarket.domain.order.repository.OrderRepository;
 import com.side.bmarket.domain.order.support.OrderFixture;
 import com.side.bmarket.domain.prodcut.entity.Products;
@@ -146,7 +147,7 @@ class OrderServiceTest {
         assertThatThrownBy(() ->
                 orderService.createOrderItem(cartItemIdList)
         )
-                .isInstanceOf(RuntimeException.class)
+                .isInstanceOf(OutOfStockProductItemException.class)
                 .hasMessageContaining("재고 수량이 부족합니다.");
     }
 

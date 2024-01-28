@@ -4,6 +4,7 @@ import com.side.bmarket.common.config.SecurityUtil;
 import com.side.bmarket.domain.prodcut.dto.response.ProductDto;
 import com.side.bmarket.domain.prodcut.entity.Likes;
 import com.side.bmarket.domain.prodcut.entity.Products;
+import com.side.bmarket.domain.prodcut.exception.NotFoundLikeException;
 import com.side.bmarket.domain.prodcut.exception.NotFoundProductException;
 import com.side.bmarket.domain.prodcut.repository.LikeRepository;
 import com.side.bmarket.domain.prodcut.repository.ProductRepository;
@@ -53,7 +54,7 @@ public class LikeService {
                 .orElseThrow(() -> new NotFoundProductException("해당 상품이 없습니다"));
 
         Likes like = likeRepository.findByUsersIdAndProductsId(user.getId(), product.getId())
-                .orElseThrow(() -> new RuntimeException("해당 정보가 없습니다"));
+                .orElseThrow(() -> new NotFoundLikeException("해당 좋아요 정보가 없습니다"));
 
         likeRepository.delete(like);
     }

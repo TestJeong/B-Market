@@ -8,9 +8,11 @@ import com.side.bmarket.domain.order.dto.response.OrderHistoryListDto;
 import com.side.bmarket.domain.order.entity.OrderItems;
 import com.side.bmarket.domain.order.entity.OrderStatus;
 import com.side.bmarket.domain.order.entity.Orders;
+import com.side.bmarket.domain.order.exception.OutOfStockProductItemException;
 import com.side.bmarket.domain.order.repository.OrderRepository;
 import com.side.bmarket.domain.prodcut.entity.Products;
 import com.side.bmarket.domain.user.entity.Users;
+import com.side.bmarket.domain.user.exception.NotFoundUserException;
 import com.side.bmarket.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +34,7 @@ public class OrderService {
     @Transactional
     public void createOrder(List<Long> cartItemId, Long userId) {
         Users user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("유저 정보가 없습니다"));
+                .orElseThrow(() -> new NotFoundUserException("유저 정보가 없습니다"));
 
         List<OrderItems> createOrderItem = createOrderItem(cartItemId);
         Orders order = Orders.builder()
@@ -88,6 +90,6 @@ public class OrderService {
 
     // 주문 가능 수량 확인
     private void verifyProductQunatity(Products product, int quantity) {
-        if (product.getQuantity() < quantity) throw new RuntimeException("재고 수량이 부족합니다.");
+        if (product.getQuantity() < quantity) throw new OutOfStockProductItemException("재고 수량이 부족합니다.");
     }
 }
