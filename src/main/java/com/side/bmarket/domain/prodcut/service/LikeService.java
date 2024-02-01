@@ -1,6 +1,5 @@
 package com.side.bmarket.domain.prodcut.service;
 
-import com.side.bmarket.common.config.SecurityUtil;
 import com.side.bmarket.domain.prodcut.dto.response.ProductDto;
 import com.side.bmarket.domain.prodcut.entity.Likes;
 import com.side.bmarket.domain.prodcut.entity.Products;
