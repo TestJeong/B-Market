@@ -53,7 +53,7 @@ public class OrderService {
 
         return cartItems.stream()
                 .map(i -> {
-                            verifyProductQunatity(i.getProduct(), i.getProductQuantity());
+                            verifyProductQuantity(i.getProduct(), i.getProductQuantity());
                             i.getProduct().decreaseQuantity(i.getProductQuantity());
                             return OrderItems.builder()
                                     .product(i.getProduct())
@@ -89,7 +89,7 @@ public class OrderService {
     }
 
     // 주문 가능 수량 확인
-    private void verifyProductQunatity(Products product, int quantity) {
+    private void verifyProductQuantity(Products product, int quantity) {
         if (product.getQuantity() < quantity) throw new OutOfStockProductItemException("재고 수량이 부족합니다.");
     }
 }

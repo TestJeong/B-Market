@@ -30,7 +30,7 @@ public class OrderController {
 
     // 주문 취소
     @PostMapping("/cancel")
-    public ResponseEntityDto<String> cancleOrder(@RequestBody Long orderId) {
+    public ResponseEntityDto<String> cancelOrder(@RequestBody Long orderId) {
         orderService.cancelOrder(orderId);
         return ResponseEntityDto.of(HttpStatus.OK, "주문을 취소 하였습니다");
     }
