@@ -1,9 +1,7 @@
 package com.side.bmarket.domain.product.service;
 
-import com.side.bmarket.domain.category.entity.Categorys;
 import com.side.bmarket.domain.category.entity.SubCategorys;
-import com.side.bmarket.domain.category.repository.CategoryRepository;
-import com.side.bmarket.domain.category.support.CategoryFixture;
+import com.side.bmarket.domain.category.repository.SubCategoryRepository;
 import com.side.bmarket.domain.category.support.SubCategoryFixture;
 import com.side.bmarket.domain.prodcut.dto.SortType;
 import com.side.bmarket.domain.prodcut.dto.response.ProductListDto;
@@ -11,7 +9,6 @@ import com.side.bmarket.domain.prodcut.entity.Products;
 import com.side.bmarket.domain.prodcut.repository.ProductRepository;
 import com.side.bmarket.domain.prodcut.service.ProductService;
 import com.side.bmarket.domain.product.support.ProductFixture;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,6 +22,7 @@ import org.springframework.data.domain.Slice;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 import static org.mockito.BDDMockito.*;
 import static org.assertj.core.api.Assertions.*;
@@ -41,7 +39,7 @@ public class ProductServiceTest {
     ProductService productService;
 
     @Mock
-    CategoryRepository categoryRepository;
+    SubCategoryRepository subCategoryRepository;
 
     @Mock
     ProductRepository productRepository;
@@ -54,7 +52,7 @@ public class ProductServiceTest {
         List<Products> productList = List.of(product1, product2, product3);
         Slice<Products> products = new PageImpl<>(productList, pageRequest, productList.size());
 
-        given(categoryRepository.findBySubCategorys(any())).willReturn(subCategorys);
+        given(subCategoryRepository.findById(any())).willReturn(Optional.ofNullable(subCategorys));
         given(productRepository.findBySubCategoryId(any(), any())).willReturn(products);
 
         // when
@@ -74,7 +72,7 @@ public class ProductServiceTest {
         productList.sort(Comparator.comparing(Products::getProductPrice));
         Slice<Products> products = new PageImpl<>(productList, pageRequest, productList.size());
 
-        given(categoryRepository.findBySubCategorys(any())).willReturn(subCategorys);
+        given(subCategoryRepository.findById(any())).willReturn(Optional.ofNullable(subCategorys));
         given(productRepository.findBySubCategoryId(any(), any())).willReturn(products);
 
         // when
@@ -94,7 +92,7 @@ public class ProductServiceTest {
         productList.sort(Comparator.comparingInt(Products::getProductPrice).reversed());
         Slice<Products> products = new PageImpl<>(productList, pageRequest, productList.size());
 
-        given(categoryRepository.findBySubCategorys(any())).willReturn(subCategorys);
+        given(subCategoryRepository.findById(any())).willReturn(Optional.ofNullable(subCategorys));
         given(productRepository.findBySubCategoryId(any(), any())).willReturn(products);
 
         // when
@@ -114,7 +112,7 @@ public class ProductServiceTest {
         productList.sort(Comparator.comparingInt(Products::getDiscountPrice).reversed());
         Slice<Products> products = new PageImpl<>(productList, pageRequest, productList.size());
 
-        given(categoryRepository.findBySubCategorys(any())).willReturn(subCategorys);
+        given(subCategoryRepository.findById(any())).willReturn(Optional.ofNullable(subCategorys));
         given(productRepository.findBySubCategoryId(any(), any())).willReturn(products);
 
         // when

@@ -1,7 +1,7 @@
 package com.side.bmarket.domain.prodcut.service;
 
 import com.side.bmarket.domain.category.entity.SubCategorys;
-import com.side.bmarket.domain.category.repository.CategoryRepository;
+import com.side.bmarket.domain.category.repository.SubCategoryRepository;
 import com.side.bmarket.domain.prodcut.dto.SortType;
 import com.side.bmarket.domain.prodcut.dto.response.ProductDto;
 import com.side.bmarket.domain.prodcut.dto.response.ProductListDto;
@@ -21,15 +21,16 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 @Slf4j
 public class ProductService {
-    private final CategoryRepository categoryRepository;
+    private final SubCategoryRepository subCategoryRepository;
     private final ProductRepository productRepository;
 
     // 세부 카테고리 기준 상품 리스트 조회
+    @Transactional(readOnly = true)
     public ProductListDto findProductBySubCategory(Long subCategoryID, SortType sortType, int currentPage) {
-        SubCategorys subCategory = categoryRepository.findBySubCategorys(subCategoryID);
+        SubCategorys subCategory = subCategoryRepository.findById(subCategoryID)
+                .orElseThrow(() -> new RuntimeException("서브카테고리 exception만들어야 함"));
         Sort sortPolicy = applySortPolicy(sortType);
         Slice<Products> products = productRepository.findBySubCategoryId(subCategoryID, PageRequest.of(currentPage, 10, sortPolicy));
 
@@ -40,6 +41,7 @@ public class ProductService {
     }
 
     // 상품 상세 조회
+    @Transactional(readOnly = true)
     public ProductDto findProductDetail(Long productID) {
         Products product = productRepository.findById(productID)
                 .orElseThrow(() -> new NotFoundProductException("해당 상품이 없습니다"));
@@ -61,6 +63,7 @@ public class ProductService {
     }
 
     // 인기 상품 리스트
+    @Transactional(readOnly = true)
     public ProductListDto findProductPopularList() {
         Slice<Products> products = productRepository.findAllByOrderByQuantityAsc(PageRequest.of(0, 10));
 
@@ -75,6 +78,7 @@ public class ProductService {
     }
 
     // 최대 할인 상품 리스트
+    @Transactional(readOnly = true)
     public ProductListDto findProductMaxDiscount() {
         Slice<Products> products = productRepository.findAllByOrderByDiscountRateDesc(PageRequest.of(0, 10));
 

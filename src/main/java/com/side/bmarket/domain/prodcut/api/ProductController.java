@@ -8,10 +8,7 @@ import com.side.bmarket.domain.prodcut.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 @RestController
@@ -30,8 +27,8 @@ public class ProductController {
     }
 
     //    상품 상세 조회
-    @GetMapping("/detail")
-    public ResponseEntityDto<ProductDto> getProductDetail(@RequestParam("productId") Long productId) {
+    @GetMapping("/detail/{productId}")
+    public ResponseEntityDto<ProductDto> getProductDetail(@PathVariable("productId") Long productId) {
         return ResponseEntityDto.of(HttpStatus.OK, productService.findProductDetail(productId));
     }
 
@@ -43,12 +40,12 @@ public class ProductController {
     }
 
     //    추천 상품 리스트
-    @GetMapping("recommend-list")
+    @GetMapping("/recommend-list")
     public void getRecommendList() {
     }
 
     //    최대 할인 상품 리스트
-    @GetMapping("max-discount")
+    @GetMapping("/max-discount")
     public ResponseEntityDto<ProductListDto> getMaxDiscountList() {
         return ResponseEntityDto.of(HttpStatus.OK, productService.findProductMaxDiscount());
     }
