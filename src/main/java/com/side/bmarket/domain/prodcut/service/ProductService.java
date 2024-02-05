@@ -1,6 +1,7 @@
 package com.side.bmarket.domain.prodcut.service;
 
 import com.side.bmarket.domain.category.entity.SubCategorys;
+import com.side.bmarket.domain.category.exception.NotFoundSubCategory;
 import com.side.bmarket.domain.category.repository.SubCategoryRepository;
 import com.side.bmarket.domain.prodcut.dto.SortType;
 import com.side.bmarket.domain.prodcut.dto.response.ProductDto;
@@ -30,7 +31,7 @@ public class ProductService {
     @Transactional(readOnly = true)
     public ProductListDto findProductBySubCategory(Long subCategoryID, SortType sortType, int currentPage) {
         SubCategorys subCategory = subCategoryRepository.findById(subCategoryID)
-                .orElseThrow(() -> new RuntimeException("서브카테고리 exception만들어야 함"));
+                .orElseThrow(() -> new NotFoundSubCategory("해당 서브 카테고리를 찾을 수 없습니다"));
         Sort sortPolicy = applySortPolicy(sortType);
         Slice<Products> products = productRepository.findBySubCategoryId(subCategoryID, PageRequest.of(currentPage, 10, sortPolicy));
 
@@ -64,8 +65,8 @@ public class ProductService {
 
     // 인기 상품 리스트
     @Transactional(readOnly = true)
-    public ProductListDto findProductPopularList() {
-        Slice<Products> products = productRepository.findAllByOrderByQuantityAsc(PageRequest.of(0, 10));
+    public ProductListDto findProductPopularList(int currentPage) {
+        Slice<Products> products = productRepository.findAllByOrderByQuantityAsc(PageRequest.of(currentPage, 10));
 
         List<ProductDto> productList = products.stream()
                 .map(ProductDto::new)
@@ -79,8 +80,8 @@ public class ProductService {
 
     // 최대 할인 상품 리스트
     @Transactional(readOnly = true)
-    public ProductListDto findProductMaxDiscount() {
-        Slice<Products> products = productRepository.findAllByOrderByDiscountRateDesc(PageRequest.of(0, 10));
+    public ProductListDto findProductMaxDiscount(int currentPage) {
+        Slice<Products> products = productRepository.findAllByOrderByDiscountRateDesc(PageRequest.of(currentPage, 10));
 
         List<ProductDto> productList = products.stream()
                 .map(ProductDto::new)

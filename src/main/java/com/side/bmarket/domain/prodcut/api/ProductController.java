@@ -35,8 +35,8 @@ public class ProductController {
 
     //    인기 상품 리스트
     @GetMapping("/popular-list")
-    public ResponseEntityDto<ProductListDto> getPopularProductList() {
-        return ResponseEntityDto.of(HttpStatus.OK, productService.findProductPopularList());
+    public ResponseEntityDto<ProductListDto> getPopularProductList(@RequestParam("currentPage") int currentPage) {
+        return ResponseEntityDto.of(HttpStatus.OK, productService.findProductPopularList(currentPage));
     }
 
     //    추천 상품 리스트
@@ -46,8 +46,8 @@ public class ProductController {
 
     //    최대 할인 상품 리스트
     @GetMapping("/max-discount")
-    public ResponseEntityDto<ProductListDto> getMaxDiscountList() {
-        return ResponseEntityDto.of(HttpStatus.OK, productService.findProductMaxDiscount());
+    public ResponseEntityDto<ProductListDto> getMaxDiscountList(@RequestParam("currentPage") int currentPage) {
+        return ResponseEntityDto.of(HttpStatus.OK, productService.findProductMaxDiscount(currentPage));
     }
 
 }
