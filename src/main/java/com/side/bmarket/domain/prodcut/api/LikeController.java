@@ -19,21 +19,21 @@ public class LikeController {
     //    찜 하기
     @PostMapping("")
     public ResponseEntityDto<String> saveLike(@RequestBody Long productId) {
-        likeService.createLike(SecurityUtil.getCurrentMemberId(),productId);
+        likeService.createLike(SecurityUtil.getCurrentMemberId(), productId);
         return ResponseEntityDto.of(HttpStatus.OK, "찜 목록에 추가하였습니다.");
     }
 
     //    찜 삭제
     @PostMapping("/cancel")
     public ResponseEntityDto<String> deleteLike(@RequestBody Long productId) {
-        likeService.deleteLike(SecurityUtil.getCurrentMemberId(),productId);
+        likeService.deleteLike(SecurityUtil.getCurrentMemberId(), productId);
         return ResponseEntityDto.of(HttpStatus.OK, "찜 목록에 삭제하였습니다.");
     }
 
     //    찜 목록 조회
     @GetMapping("/list")
-    public ResponseEntityDto<List<ProductDto>> getLikeList() {
-        List<ProductDto> productDtoList = likeService.findLikeByUser(SecurityUtil.getCurrentMemberId());
+    public ResponseEntityDto<List<ProductDto>> getLikeList(@RequestParam("currentPage") int currentPage) {
+        List<ProductDto> productDtoList = likeService.findLikeByUser(SecurityUtil.getCurrentMemberId(), currentPage);
         return ResponseEntityDto.of(HttpStatus.OK, productDtoList);
     }
 }

@@ -12,6 +12,8 @@ import com.side.bmarket.domain.user.exception.NotFoundUserException;
 import com.side.bmarket.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -60,16 +62,15 @@ public class LikeService {
 
     //    찜한 목록 리스트
     @Transactional(readOnly = true)
-    public List<ProductDto> findLikeByUser(Long userId) {
+    public List<ProductDto> findLikeByUser(Long userId, int currentPage) {
         Users user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundUserException("유저 정보가 없습니다"));
 
-        List<Likes> likesList = likeRepository.findByUsersId(user.getId());
+        Slice<Likes> likesList = likeRepository.findByUsersId(user.getId(), PageRequest.of(currentPage, 10));
 
         return likesList.stream()
                 .map((i) -> ProductDto.of(i.getProducts()))
                 .collect(Collectors.toList());
-
     }
 
 }
