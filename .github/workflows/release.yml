@@ -17,7 +17,6 @@ jobs:
     env:
       PORT: 3000
     steps:
-      # github repository에서 checkout
       - name: Checkout
         uses: actions/checkout@v3
 
@@ -29,10 +28,10 @@ jobs:
           echo "DB_USERNAME=$DB_USERNAME" >> .env
           echo "JWT_SECRET=$JWT_SECRET" >> .env
         env:
-          DB_PASSWORD: ${{ vars.$DB_PASSWORD }}
-          DB_URL: ${{ vars.$DB_URL }}
-          DB_USERNAME: ${{ vars.$DB_USERNAME }}
-          JWT_SECRET: ${{ vars.$JWT_SECRET }}
+          DB_PASSWORD: ${{ secrets.$DB_PASSWORD }}
+          DB_URL: ${{ secrets.$DB_URL }}
+          DB_USERNAME: ${{ secrets.$DB_USERNAME }}
+          JWT_SECRET: ${{ secrets.$JWT_SECRET }}
 
       # docker cli 플러그인 buildx 설치. 이후 도커 빌드 수행
       - name: Set up Docker Buildx
