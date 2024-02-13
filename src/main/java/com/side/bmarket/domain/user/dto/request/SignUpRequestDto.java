@@ -1,4 +1,4 @@
-package com.side.bmarket.domain.user.dto;
+package com.side.bmarket.domain.user.dto.request;
 
 import com.side.bmarket.domain.user.entity.Users;
 import lombok.AllArgsConstructor;
@@ -10,7 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SignUpRequestDto {
-    private  String userEmail;
+    private String userEmail;
     private String password;
     private String userNickName;
 

@@ -3,8 +3,9 @@ package com.side.bmarket.domain.user.service;
 
 import com.side.bmarket.common.jwt.TokenDto;
 import com.side.bmarket.common.jwt.TokenProvider;
-import com.side.bmarket.domain.user.dto.SignUpRequestDto;
+import com.side.bmarket.domain.user.dto.request.SignUpRequestDto;
 import com.side.bmarket.domain.user.entity.Users;
+import com.side.bmarket.domain.user.exception.NotFoundUserException;
 import com.side.bmarket.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,17 +36,18 @@ public class UserService {
         Users user = userRepository.findByUserEmail(signUpRequestDto.getUserEmail())
                 .orElseThrow();
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(signUpRequestDto.getUserEmail(), signUpRequestDto.getPassword());
+
         // 2. 실제로 검증 (사용자 비밀번호 체크) 이 이루어지는 부분
         //    authenticate 메서드가 실행이 될 때 CustomUserDetailsService 에서 만들었던 loadUserByUsername 메서드가 실행됨
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-        // 3. 인증 정보를 기반으로 JWT 토큰 생성
 
+        // 3. 인증 정보를 기반으로 JWT 토큰 생성
         return tokenProvider.generateTokenDto(authentication, user);
     }
 
     //    유저 정보
-    public void findByUser() {
+    public Users findByUser(long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundUserException("해당 유저를 찾을 수 없습니다."));
     }
-
-
 }
