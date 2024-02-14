@@ -83,12 +83,12 @@ jobs:
       #   run: |
       #     docker login -u ${{ github.actor }} -p ${{ secrets.CKEDITOR_AUTH_TOKEN }} ghcr.io
 
-      - name: Remove running container and image
-        run: |
-          docker stop ${{ env.DOCKER_CONTAINER }} && docker rm ${{ env.DOCKER_CONTAINER }} && docker rmi ${{ env.DOCKER_IMAGE }}:latest
+      # - name: Remove running container and image
+      #   run: |
+      #     docker stop ${{ env.DOCKER_CONTAINER }} && docker rm ${{ env.DOCKER_CONTAINER }} && docker rmi ${{ env.DOCKER_IMAGE }}:latest
       - name: Docker run
         run: |
-          docker run -d -p 80:3000 --name ${{ env.DOCKER_CONTAINER }} --restart always ${{ env.DOCKER_IMAGE }}:latest
+          docker run -d -p 80:8080 --name ${{ env.DOCKER_CONTAINER }} --restart always ${{ env.DOCKER_IMAGE }}:latest
 
       # - name: Docker run
       #   run: |
