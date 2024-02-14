@@ -4,6 +4,7 @@ package com.side.bmarket.domain.user.service;
 import com.side.bmarket.common.jwt.TokenDto;
 import com.side.bmarket.common.jwt.TokenProvider;
 import com.side.bmarket.domain.user.dto.request.SignUpRequestDto;
+import com.side.bmarket.domain.user.dto.response.UserDetailDto;
 import com.side.bmarket.domain.user.entity.Users;
 import com.side.bmarket.domain.user.exception.NotFoundUserException;
 import com.side.bmarket.domain.user.repository.UserRepository;
@@ -46,8 +47,10 @@ public class UserService {
     }
 
     //    유저 정보
-    public Users findByUser(long userId) {
-        return userRepository.findById(userId)
+    public UserDetailDto findByUser(long userId) {
+        Users user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundUserException("해당 유저를 찾을 수 없습니다."));
+
+        return new UserDetailDto(user.getId(), user.getNickname());
     }
 }

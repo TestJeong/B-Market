@@ -32,8 +32,7 @@ public class UserController {
 
     // 유저 정보
     @GetMapping("/my")
-    public UserDetailDto userDetail() {
-        Users user = userService.findByUser(SecurityUtil.getCurrentMemberId());
-        return new UserDetailDto(user.getId(), user.getNickname());
+    public ResponseEntityDto<UserDetailDto> userDetail() {
+        return ResponseEntityDto.of(HttpStatus.OK, userService.findByUser(SecurityUtil.getCurrentMemberId()));
     }
 }

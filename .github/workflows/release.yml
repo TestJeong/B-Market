@@ -19,19 +19,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      #
-      #      # Github Repository Secrets를 통해 환경 변수 파일 생성
-      #      - name: Create .env file
-      #        run: |
-      #          echo "DB_PASSWORD=$DB_PASSWORD" >> .env
-      #          echo "DB_URL=$DB_URL" >> .env
-      #          echo "DB_USERNAME=$DB_USERNAME" >> .env
-      #          echo "JWT_SECRET=$JWT_SECRET" >> .env
-      #        env:
-      #          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-      #          DB_URL: ${{ secrets.DB_URL }}
-      #          DB_USERNAME: ${{ secrets.DB_USERNAME }}
-      #          JWT_SECRET: ${{ secrets.JWT_SECRET }}
 
       # docker cli 플러그인 buildx 설치. 이후 도커 빌드 수행
       - name: Set up Docker Buildx
@@ -89,9 +76,9 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GHCR_TOKEN }}
 
-#      - name: Remove running container and image
-#        run: |
-#          docker stop ${{ env.DOCKER_CONTAINER }} && docker rm ${{ env.DOCKER_CONTAINER }} && docker rmi ${{ env.DOCKER_IMAGE }}:latest
+      - name: Remove running container and image
+        run: |
+          docker stop ${{ env.DOCKER_CONTAINER }} && docker rm ${{ env.DOCKER_CONTAINER }} && docker rmi ${{ env.DOCKER_IMAGE }}:latest
 
       - name: Docker run
         run: |
