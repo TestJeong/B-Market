@@ -6,7 +6,7 @@ on:
 
 env:
   # DOCKER_IMAGE: ghcr.io/${{ github.actor }}/fe-lb-v3-dev-auto-deploy
-  DOCKER_IMAGE: ghcr.io/${{ github.actor }}/b-market
+  DOCKER_IMAGE: ghcr.io/testjeong/b-market
   DOCKER_CONTAINER: b-market-release
   VERSION: ${{ github.sha }}
 
