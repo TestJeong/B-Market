@@ -52,6 +52,10 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GHCR_TOKEN }}
+
+      - name: Build with Gradle
+        run: ./gradlew build
+        
       - name: Build and push
         id: docker_build
         uses: docker/build-push-action@v3
