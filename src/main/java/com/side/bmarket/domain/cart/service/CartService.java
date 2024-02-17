@@ -23,14 +23,15 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
+
 public class CartService {
     private final UserRepository userRepository;
     private final CartRepository cartRepository;
     private final CartItemRepository cartItemRepository;
     private final ProductRepository productRepository;
 
-    //    장바구니에서 상품 저장
+    // 장바구니에서 상품 저장
+    @Transactional
     public void saveCartItem(Long productID, Long userId, int quantity) {
         Users user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundUserException("해당 유저가 없습니다."));
@@ -61,6 +62,7 @@ public class CartService {
     }
 
     // 장바구니에서 상품 삭제
+    @Transactional
     public void deleteCartItem(Long cartItemId) {
         CartItems cartItem = cartItemRepository.findById(cartItemId)
                 .orElseThrow(() -> new NotFoundCartItemException("해당 cartItem이 없습니다."));
@@ -85,6 +87,7 @@ public class CartService {
     }
 
     // 장바구니에서 상품 수량 업데이트
+    @Transactional
     public void updateCartItemQuantity(Long cartItemID, int quantity) {
         CartItems cartItem = cartItemRepository.findById(cartItemID)
                 .orElseThrow(() -> new NotFoundCartItemException("해당 cartItem이 없습니다."));

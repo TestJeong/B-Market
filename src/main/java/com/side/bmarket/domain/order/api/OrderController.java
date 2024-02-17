@@ -22,7 +22,7 @@ public class OrderController {
     private final OrderService orderService;
 
     // 주문 생성
-    @PostMapping("/")
+    @PostMapping("")
     public ResponseEntityDto<String> createOrder(@Valid @RequestBody CreateOrderRequestDto requestDto) {
         orderService.createOrder(requestDto.getCartItemId(), SecurityUtil.getCurrentMemberId());
         return ResponseEntityDto.of(HttpStatus.OK, "주문을 생성 하였습니다");
@@ -37,7 +37,9 @@ public class OrderController {
 
     // 주문 내역
     @GetMapping("/my-order")
-    public List<OrderHistoryListDto> getOrderList() {
-        return orderService.findOrderByUser(SecurityUtil.getCurrentMemberId());
+    public ResponseEntityDto<List<OrderHistoryListDto>> getOrderList() {
+        orderService.findOrderByUser(SecurityUtil.getCurrentMemberId());
+        return ResponseEntityDto.of(HttpStatus.OK, orderService.findOrderByUser(SecurityUtil.getCurrentMemberId()));
     }
 }
+

@@ -1,7 +1,5 @@
 package com.side.bmarket.domain.order.service;
 
-
-import com.side.bmarket.common.config.SecurityUtil;
 import com.side.bmarket.domain.cart.entity.CartItems;
 import com.side.bmarket.domain.cart.repository.CartItemRepository;
 import com.side.bmarket.domain.order.dto.response.OrderHistoryListDto;

@@ -8,11 +8,11 @@ import java.util.Date;
 
 @Getter
 public class OrderHistoryListDto {
-    private Long orderId;
-    private String name;
-    private int totalPrice;
-    private Date date;
-    private OrderStatus orderStatus;
+    private final Long orderId;
+    private final String name;
+    private final int totalPrice;
+    private final Date date;
+    private final OrderStatus orderStatus;
 
     @Builder
     public OrderHistoryListDto(Long orderId, String name, int totalPrice, Date date, OrderStatus orderStatus) {
