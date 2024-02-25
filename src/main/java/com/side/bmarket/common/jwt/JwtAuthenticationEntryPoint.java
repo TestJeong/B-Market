@@ -18,7 +18,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         final ObjectMapper objectMapper = new ObjectMapper();
 
         // 유효한 자격증명을 제공하지 않고 접근하려 할때 401
-        ErrorDto errorDto = new ErrorDto(HttpServletResponse.SC_UNAUTHORIZED, "만료된 JWT 토큰입니다.");
+        ErrorDto errorDto = new ErrorDto(HttpServletResponse.SC_UNAUTHORIZED, "올바른 토큰이 필요합니다.");
 
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentType("application/json");

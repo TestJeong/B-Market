@@ -25,8 +25,8 @@ public class CategoryService {
     }
 
     @Transactional(readOnly = true)
-    public List<SubCategoryDto> findBySubCategory(Long categoryID) {
-        return subCategoryRepository.findByCategoryId(categoryID).stream()
+    public List<SubCategoryDto> findBySubCategory(Long categoryId) {
+        return subCategoryRepository.findByCategoryId(categoryId).stream()
                 .map(item -> new SubCategoryDto(item.getId(), item.getSubCategoryName()))
                 .collect(Collectors.toList());
     }

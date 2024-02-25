@@ -1,16 +1,7 @@
-// restdocs-api-spec: version 변수 설정
-buildscript {
-    ext {
-        restdocsApiSpecVersion = '0.16.2'
-    }
-}
-
 plugins {
     id 'java'
     id 'org.springframework.boot' version '2.7.17'
     id 'io.spring.dependency-management' version '1.0.15.RELEASE'
-    // restdocs-api-spec: plugin 추가
-    id 'com.epages.restdocs-api-spec' version "${restdocsApiSpecVersion}"
 }
 
 group = 'com.side'
@@ -30,18 +21,6 @@ repositories {
     mavenCentral()
 }
 
-// restdocs-api-spec: OpenAPI 스펙 생성 설정 명시
-openapi3 {
-    server = "http://localhost:8080"
-    title = "restdocs-swagger Test API Documentation"
-    description = "Spring REST Docs with SwaggerUI"
-    version = "0.0.1-SNAPSHOT"
-    format = "json"
-    outputDirectory = "src/main/resources/static"
-    outputFileNamePrefix = "swagger"
-}
-
-
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'mysql:mysql-connector-java:8.0.33'
@@ -60,8 +39,6 @@ dependencies {
 
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    // restdocs-api-spec: restdocs-api-spec-mockmvc 의존성 추가
-    testImplementation "com.epages:restdocs-api-spec-mockmvc:${restdocsApiSpecVersion}"
 
 }
 

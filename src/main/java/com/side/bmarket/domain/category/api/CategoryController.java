@@ -16,10 +16,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -38,17 +35,17 @@ public class CategoryController {
         return ResponseEntityDto.of(HttpStatus.OK, categoryService.findAllCategory());
     }
 
-    @GetMapping("/category/subcategory")
+    @GetMapping("/category/subcategory/{categoryId}")
     @Operation(summary = "서브 카테고리 조회", description = "서브 카테고리 리스트를 조회합니다.")
-    @Parameter(name = "categoryID", description = "카테고리 ID", required = true)
+    @Parameter(name = "categoryId", description = "카테고리 ID", required = true)
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(
                     responseCode = "401", description = "유효하지 않는 상품 카테고리 ID",
                     content = @Content(schema = @Schema(implementation = ErrorDto.class))),
     })
-    public ResponseEntityDto<List<SubCategoryDto>> getSubCategoryList(@RequestParam("categoryID") Long categoryID) {
-        return ResponseEntityDto.of(HttpStatus.OK, categoryService.findBySubCategory(categoryID));
+    public ResponseEntityDto<List<SubCategoryDto>> getSubCategoryList(@PathVariable("categoryId") Long categoryId) {
+        return ResponseEntityDto.of(HttpStatus.OK, categoryService.findBySubCategory(categoryId));
     }
 
 }
