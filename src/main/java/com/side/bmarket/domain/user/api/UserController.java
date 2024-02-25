@@ -35,4 +35,9 @@ public class UserController {
     public ResponseEntityDto<UserDetailDto> userDetail() {
         return ResponseEntityDto.of(HttpStatus.OK, userService.findByUser(SecurityUtil.getCurrentMemberId()));
     }
+
+    @GetMapping("/auth/test")
+    HttpStatus hoho() {
+       return HttpStatus.OK;
+    }
 }
