@@ -5,21 +5,19 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.util.Date;
+import java.util.List;
 
 @Getter
 public class OrderHistoryListDto {
-    private final Long orderId;
-    private final String name;
-    private final int totalPrice;
-    private final Date date;
-    private final OrderStatus orderStatus;
+
+    private final int currentPage;
+    private final Boolean hasNextPage;
+    private final List<OrderResponseDto> item;
 
     @Builder
-    public OrderHistoryListDto(Long orderId, String name, int totalPrice, Date date, OrderStatus orderStatus) {
-        this.orderId = orderId;
-        this.name = name;
-        this.totalPrice = totalPrice;
-        this.date = date;
-        this.orderStatus = orderStatus;
+    public OrderHistoryListDto(int currentPage, Boolean hasNextPage, List<OrderResponseDto> item) {
+        this.currentPage = currentPage;
+        this.hasNextPage = hasNextPage;
+        this.item = item;
     }
 }

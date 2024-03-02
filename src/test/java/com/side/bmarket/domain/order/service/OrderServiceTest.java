@@ -18,11 +18,15 @@ import com.side.bmarket.domain.user.repository.UserRepository;
 import com.side.bmarket.domain.user.support.UserFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -155,15 +159,17 @@ class OrderServiceTest {
     @Test
     void findOrderByUser() {
         // given
-       Orders order = OrderFixture.createOrder();
-       given(orderRepository.findByUserId(any())).willReturn(Collections.singletonList(order));
+        Orders order = OrderFixture.createOrder();
+        List<Orders> orderList = List.of(order);
+        Slice<Orders> orderSlice = new PageImpl<>(orderList, PageRequest.of(0, 10), orderList.size());
+        given(orderRepository.findByUserId(any(), any())).willReturn(orderSlice);
 
         // when
-        List<OrderHistoryListDto> orderHistoryList = orderService.findOrderByUser(1L);
+        OrderHistoryListDto orderHistoryList = orderService.findOrderByUser(1L, 0);
 
         // then
-        assertThat(orderHistoryList.get(0).getName()).isEqualTo("상품1 외 1개");
-        assertThat(orderHistoryList.get(0).getTotalPrice()).isEqualTo(4500);
+        assertThat(orderHistoryList.getItem().get(0).getName()).isEqualTo("상품1 외 1개");
+        assertThat(orderHistoryList.getItem().get(0).getTotalPrice()).isEqualTo(4500);
     }
 
 }

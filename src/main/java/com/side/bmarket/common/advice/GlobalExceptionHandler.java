@@ -1,6 +1,8 @@
 package com.side.bmarket.common.advice;
 
 import com.side.bmarket.common.dto.ErrorDto;
+import com.side.bmarket.domain.category.exception.NotFoundSubCategory;
+import com.side.bmarket.domain.prodcut.exception.NotFoundProductException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +30,18 @@ public class GlobalExceptionHandler {
     ResponseEntity<ErrorDto> handleRequestParameterException(MissingServletRequestParameterException ex) {
         final ErrorDto errorDto = new ErrorDto(400, ex.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorDto);
+    }
+
+    @ExceptionHandler(NotFoundSubCategory.class)
+    ResponseEntity<ErrorDto> handleRequestNotFoundSubCategoryException(NotFoundSubCategory ex) {
+        final ErrorDto errorDto = new ErrorDto(4004, ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorDto);
+    }
+
+    @ExceptionHandler(NotFoundProductException.class)
+    ResponseEntity<ErrorDto> handleRequestNotFoundProductException(NotFoundProductException ex) {
+        final ErrorDto errorDto = new ErrorDto(4005, ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorDto);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

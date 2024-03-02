@@ -31,14 +31,14 @@ public class ProductService {
     @Transactional(readOnly = true)
     public ProductListDto findProductBySubCategory(Long subCategoryID, SortType sortType, int currentPage) {
         SubCategorys subCategory = subCategoryRepository.findById(subCategoryID)
-                .orElseThrow(() -> new NotFoundSubCategory("해당 서브 카테고리를 찾을 수 없습니다"));
+                .orElseThrow(() -> new NotFoundSubCategory("해당 세부 카테고리를 찾을 수 없습니다"));
         Sort sortPolicy = applySortPolicy(sortType);
         Slice<Products> products = productRepository.findBySubCategoryId(subCategoryID, PageRequest.of(currentPage, 10, sortPolicy));
 
         List<ProductDto> productList = products.stream()
                 .map(ProductDto::new)
                 .collect(Collectors.toList());
-        return ProductListDto.of(subCategory.getId(), subCategory.getSubCategoryName(), currentPage, productList);
+        return ProductListDto.of(subCategory.getId(), subCategory.getSubCategoryName(), products.hasNext(), currentPage, productList);
     }
 
     // 상품 상세 조회
@@ -75,6 +75,7 @@ public class ProductService {
         return ProductListDto.builder()
                 .product(productList)
                 .currentPage(0)
+                .hasNextPage(products.hasNext())
                 .build();
     }
 
@@ -90,6 +91,7 @@ public class ProductService {
         return ProductListDto.builder()
                 .product(productList)
                 .currentPage(0)
+                .hasNextPage(products.hasNext())
                 .build();
     }
 }

@@ -45,9 +45,8 @@ public class OrderController {
     // 주문 내역
     @GetMapping("/order/my-order")
     @Operation(summary = "내 주문내역 조회", description = "나의 주문내역을 조회합니다.")
-    public ResponseEntityDto<List<OrderHistoryListDto>> getOrderList() {
-        orderService.findOrderByUser(SecurityUtil.getCurrentMemberId());
-        return ResponseEntityDto.of(HttpStatus.OK, orderService.findOrderByUser(SecurityUtil.getCurrentMemberId()));
+    public ResponseEntityDto<OrderHistoryListDto> getOrderList(@RequestParam("currentPage") int currentPage) {
+        return ResponseEntityDto.of(HttpStatus.OK, orderService.findOrderByUser(SecurityUtil.getCurrentMemberId(), currentPage));
     }
 }
 

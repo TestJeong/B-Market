@@ -3,6 +3,7 @@ package com.side.bmarket.domain.prodcut.api;
 import com.side.bmarket.common.config.SecurityUtil;
 import com.side.bmarket.common.dto.ResponseEntityDto;
 import com.side.bmarket.domain.prodcut.dto.response.ProductDto;
+import com.side.bmarket.domain.prodcut.dto.response.ProductListDto;
 import com.side.bmarket.domain.prodcut.service.LikeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -37,8 +38,8 @@ public class LikeController {
 
     @GetMapping("/like/list")
     @Operation(summary = "찜 리스트 조회", description = "나의 찜 목록 리스트를 조회합니다.")
-    public ResponseEntityDto<List<ProductDto>> getLikeList(@RequestParam("currentPage") int currentPage) {
-        List<ProductDto> productDtoList = likeService.findLikeByUser(SecurityUtil.getCurrentMemberId(), currentPage);
+    public ResponseEntityDto<ProductListDto> getLikeList(@RequestParam("currentPage") int currentPage) {
+        ProductListDto productDtoList = likeService.findLikeByUser(SecurityUtil.getCurrentMemberId(), currentPage);
         return ResponseEntityDto.of(HttpStatus.OK, productDtoList);
     }
 }

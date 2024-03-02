@@ -1,6 +1,7 @@
 package com.side.bmarket.domain.prodcut.service;
 
 import com.side.bmarket.domain.prodcut.dto.response.ProductDto;
+import com.side.bmarket.domain.prodcut.dto.response.ProductListDto;
 import com.side.bmarket.domain.prodcut.entity.Likes;
 import com.side.bmarket.domain.prodcut.entity.Products;
 import com.side.bmarket.domain.prodcut.exception.NotFoundLikeException;
@@ -28,7 +29,7 @@ public class LikeService {
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
 
-    //    찜하기 추가
+    // 찜하기 추가
     @Transactional
     public void createLike(Long userId, Long productID) {
         Users user = userRepository.findById(userId)
@@ -45,7 +46,7 @@ public class LikeService {
         likeRepository.save(like);
     }
 
-    //    찜하기 삭제
+    // 찜하기 삭제
     @Transactional
     public void deleteLike(Long userId, Long productID) {
         Users user = userRepository.findById(userId)
@@ -60,17 +61,23 @@ public class LikeService {
         likeRepository.delete(like);
     }
 
-    //    찜한 목록 리스트
+    // 찜한 목록 리스트
     @Transactional(readOnly = true)
-    public List<ProductDto> findLikeByUser(Long userId, int currentPage) {
+    public ProductListDto findLikeByUser(Long userId, int currentPage) {
         Users user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundUserException("유저 정보가 없습니다"));
 
         Slice<Likes> likesList = likeRepository.findByUsersId(user.getId(), PageRequest.of(currentPage, 10));
 
-        return likesList.stream()
+        List<ProductDto> likeList = likesList.stream()
                 .map((i) -> ProductDto.of(i.getProducts()))
                 .collect(Collectors.toList());
+
+        return ProductListDto.builder()
+                .product(likeList)
+                .currentPage(0)
+                .hasNextPage(likesList.hasNext())
+                .build();
     }
 
 }

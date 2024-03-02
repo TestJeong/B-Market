@@ -3,6 +3,7 @@ package com.side.bmarket.domain.order.service;
 import com.side.bmarket.domain.cart.entity.CartItems;
 import com.side.bmarket.domain.cart.repository.CartItemRepository;
 import com.side.bmarket.domain.order.dto.response.OrderHistoryListDto;
+import com.side.bmarket.domain.order.dto.response.OrderResponseDto;
 import com.side.bmarket.domain.order.entity.OrderItems;
 import com.side.bmarket.domain.order.entity.OrderStatus;
 import com.side.bmarket.domain.order.entity.Orders;
@@ -14,6 +15,8 @@ import com.side.bmarket.domain.user.exception.NotFoundUserException;
 import com.side.bmarket.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -63,15 +66,24 @@ public class OrderService {
 
     // 주문 내역
     @Transactional(readOnly = true)
-    public List<OrderHistoryListDto> findOrderByUser(Long userId) {
-        return orderRepository.findByUserId(userId).stream()
-                .map((i) -> OrderHistoryListDto.builder()
+    public OrderHistoryListDto findOrderByUser(Long userId, int currentPage) {
+        Slice<Orders> orderList = orderRepository.findByUserId(userId, PageRequest.of(currentPage, 10));
+
+        List<OrderResponseDto> orderLists = orderList.stream()
+                .map((i) -> OrderResponseDto.builder()
                         .orderId(i.getId())
                         .name(i.getOrderName())
                         .totalPrice(i.getOrderPrice())
                         .orderStatus(i.getOrderStatus())
                         .build())
                 .collect(Collectors.toList());
+
+
+        return OrderHistoryListDto.builder()
+                .currentPage(currentPage)
+                .hasNextPage(orderList.hasNext())
+                .item(orderLists)
+                .build();
     }
 
     // 주문 취소

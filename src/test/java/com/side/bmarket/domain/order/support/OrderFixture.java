@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class OrderFixture {
+
     public static Orders createOrder() {
         return Orders.builder()
                 .user(UserFixture.createUser("테스트 유저1"))
