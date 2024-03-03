@@ -15,6 +15,12 @@
 
 <br />
 
+### Swagger
+http://production.bmarketapp.com/swagger-ui/index.html
+##### 테스트 계정
+- userEmail : test1@naver.com
+- password : 123
+
 ### 구현사항
 ##### **카테고리, 세부 카테고리**
 - 카테고리 리스트 조회
@@ -46,6 +52,9 @@
 - 회원가입
 - 로그인
 - 유저정보 조회
+
+
+
 
 <br/>
 

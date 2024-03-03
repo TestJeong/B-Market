@@ -1,4 +1,4 @@
-package com.side.bmarket.domain.product.support;
+ package com.side.bmarket.domain.product.support;
 
 import com.side.bmarket.domain.category.entity.SubCategorys;
 import com.side.bmarket.domain.category.support.SubCategoryFixture;
