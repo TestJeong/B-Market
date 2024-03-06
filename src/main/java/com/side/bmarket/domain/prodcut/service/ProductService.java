@@ -94,4 +94,15 @@ public class ProductService {
                 .hasNextPage(products.hasNext())
                 .build();
     }
+
+    // 상품 검색
+    @Transactional
+    public List<ProductDto> findProduct(String searchTitle) {
+        List<Products> products = productRepository.findProduct(searchTitle);
+        return products.stream()
+                .map(ProductDto::new)
+                .collect(Collectors.toList());
+
+
+    }
 }

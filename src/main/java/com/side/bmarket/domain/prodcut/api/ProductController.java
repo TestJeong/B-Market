@@ -13,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Tag(name = "Product", description = "Product 관련 API")
 @RestController
 @Validated
@@ -52,6 +54,13 @@ public class ProductController {
     @Parameter(name = "currentPage", description = "현재 페이지", required = true)
     public ResponseEntityDto<ProductListDto> getMaxDiscountList(@RequestParam("currentPage") int currentPage) {
         return ResponseEntityDto.of(HttpStatus.OK, productService.findProductMaxDiscount(currentPage));
+    }
+
+    @GetMapping("/search")
+    @Operation(summary = "상품 검색", description = "해당 상품을 검색합니다")
+    @Parameter(name = "searchTitle", description = "검색할 상품명", required = true)
+    public ResponseEntityDto<List<ProductDto>> getSearchProductList(@RequestParam("searchTitle") String searchTitle) {
+        return ResponseEntityDto.of(HttpStatus.OK, productService.findProduct(searchTitle));
     }
 
 }
