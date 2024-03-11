@@ -17,6 +17,7 @@ public interface ProductRepository extends JpaRepository<Products, Long> {
 
     Slice<Products> findAllByOrderByDiscountRateDesc(Pageable pageable);
 
-    @Query(value = "select p from Products p where p.productName like %:productName%")
+    //    @Query(value = "select p from Products p where p.productName like %:productName%")
+    @Query(value = "SELECT * FROM products p WHERE MATCH(p.product_name) AGAINST (CONCAT(:productName, '*') IN BOOLEAN MODE)", nativeQuery = true)
     List<Products> findProduct(@Param("productName") String productName);
 }
