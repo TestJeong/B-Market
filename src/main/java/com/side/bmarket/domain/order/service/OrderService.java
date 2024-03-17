@@ -1,15 +1,19 @@
 package com.side.bmarket.domain.order.service;
 
 import com.side.bmarket.domain.cart.entity.CartItems;
+import com.side.bmarket.domain.cart.exception.NotFoundCartItemException;
 import com.side.bmarket.domain.cart.repository.CartItemRepository;
 import com.side.bmarket.domain.order.dto.response.OrderHistoryListDto;
 import com.side.bmarket.domain.order.dto.response.OrderResponseDto;
 import com.side.bmarket.domain.order.entity.OrderItems;
 import com.side.bmarket.domain.order.entity.OrderStatus;
 import com.side.bmarket.domain.order.entity.Orders;
+import com.side.bmarket.domain.order.exception.NotFoundOrderException;
 import com.side.bmarket.domain.order.exception.OutOfStockProductItemException;
 import com.side.bmarket.domain.order.repository.OrderRepository;
 import com.side.bmarket.domain.prodcut.entity.Products;
+import com.side.bmarket.domain.prodcut.exception.NotFoundProductException;
+import com.side.bmarket.domain.prodcut.repository.ProductRepository;
 import com.side.bmarket.domain.user.entity.Users;
 import com.side.bmarket.domain.user.exception.NotFoundUserException;
 import com.side.bmarket.domain.user.repository.UserRepository;
@@ -29,18 +33,21 @@ import java.util.stream.Collectors;
 public class OrderService {
     private final OrderRepository orderRepository;
     private final CartItemRepository cartItemRepository;
+    private final ProductRepository productRepository;
     private final UserRepository userRepository;
 
     // 주문 생성
     @Transactional
     public void createOrder(List<Long> cartItemId, Long userId) {
-        Users user = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundUserException("유저 정보가 없습니다"));
+        Users user = findUserById(userId);
 
-        List<OrderItems> createOrderItem = createOrderItem(cartItemId);
+        List<OrderItems> orderItems = cartItemId.stream()
+                .map(this::createOrderItem)
+                .collect(Collectors.toList());
+
         Orders order = Orders.builder()
                 .user(user)
-                .orderItems(createOrderItem)
+                .orderItems(orderItems)
                 .orderStatus(OrderStatus.PENDING)
                 .build();
 
@@ -48,20 +55,15 @@ public class OrderService {
     }
 
     // 주문 아이템 생성
-    @Transactional
-    public List<OrderItems> createOrderItem(List<Long> cartItemId) {
-        List<CartItems> cartItems = cartItemRepository.findByIdIn(cartItemId);
+    private OrderItems createOrderItem(Long cartItemId) {
+        CartItems cartItem = findCartItemById(cartItemId);
+        verifyProductQuantity(cartItem.getProduct(), cartItem.getProductQuantity());
+        cartItem.getProduct().decreaseQuantity(cartItem.getProductQuantity());
 
-        return cartItems.stream()
-                .map(i -> {
-                            verifyProductQuantity(i.getProduct(), i.getProductQuantity());
-                            i.getProduct().decreaseQuantity(i.getProductQuantity());
-                            return OrderItems.builder()
-                                    .product(i.getProduct())
-                                    .quantity(i.getProductQuantity())
-                                    .build();
-                        }
-                ).collect(Collectors.toList());
+        return OrderItems.builder()
+                .product(cartItem.getProduct())
+                .quantity(cartItem.getProductQuantity())
+                .build();
     }
 
     // 주문 내역
@@ -70,14 +72,8 @@ public class OrderService {
         Slice<Orders> orderList = orderRepository.findByUserId(userId, PageRequest.of(currentPage, 10));
 
         List<OrderResponseDto> orderLists = orderList.stream()
-                .map((i) -> OrderResponseDto.builder()
-                        .orderId(i.getId())
-                        .name(i.getOrderName())
-                        .totalPrice(i.getOrderPrice())
-                        .orderStatus(i.getOrderStatus())
-                        .build())
+                .map(OrderResponseDto::new)
                 .collect(Collectors.toList());
-
 
         return OrderHistoryListDto.builder()
                 .currentPage(currentPage)
@@ -89,17 +85,36 @@ public class OrderService {
     // 주문 취소
     @Transactional
     public void cancelOrder(Long orderId) {
-        Orders order = orderRepository.findById(orderId)
-                .orElseThrow();
-
+        Orders order = findOrderById(orderId);
         order.updateOrderStatus(OrderStatus.CANCELED);
         order.getOrderItems().forEach(
-                orderItems -> orderItems.getProduct().increaseQuantity(orderItems.getQuantity())
+                orderItems -> productRepository.increaseQuantity(orderItems.getProduct().getId(), orderItems.getQuantity())
         );
     }
 
     // 주문 가능 수량 확인
     private void verifyProductQuantity(Products product, int quantity) {
-        if (product.getQuantity() < quantity) throw new OutOfStockProductItemException("재고 수량이 부족합니다.");
+        Products products = findProductById(product.getId());
+        if (products.getQuantity() < quantity) throw new OutOfStockProductItemException("재고 수량이 부족합니다.");
+    }
+
+    private Orders findOrderById(Long orderId) {
+        return orderRepository.findById(orderId)
+                .orElseThrow(() -> new NotFoundOrderException("존재하지 않는 주문입니다."));
+    }
+
+    private Products findProductById(final Long productId) {
+        return productRepository.findByProductId(productId)
+                .orElseThrow(() -> new NotFoundProductException("존재하지 않는 상품입니다."));
+    }
+
+    private Users findUserById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundUserException("유저 정보가 없습니다."));
+    }
+
+    private CartItems findCartItemById(Long cartItemId) {
+        return cartItemRepository.findById(cartItemId)
+                .orElseThrow(() -> new NotFoundCartItemException("해당 cartItem이 없습니다."));
     }
 }

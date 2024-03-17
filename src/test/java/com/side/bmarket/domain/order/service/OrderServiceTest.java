@@ -7,11 +7,13 @@ import com.side.bmarket.domain.cart.support.CartFixture;
 import com.side.bmarket.domain.cart.support.CartItemFixture;
 import com.side.bmarket.domain.order.dto.response.OrderHistoryListDto;
 import com.side.bmarket.domain.order.entity.OrderItems;
+import com.side.bmarket.domain.order.entity.OrderStatus;
 import com.side.bmarket.domain.order.entity.Orders;
 import com.side.bmarket.domain.order.exception.OutOfStockProductItemException;
 import com.side.bmarket.domain.order.repository.OrderRepository;
 import com.side.bmarket.domain.order.support.OrderFixture;
 import com.side.bmarket.domain.prodcut.entity.Products;
+import com.side.bmarket.domain.prodcut.repository.ProductRepository;
 import com.side.bmarket.domain.product.support.ProductFixture;
 import com.side.bmarket.domain.user.entity.Users;
 import com.side.bmarket.domain.user.repository.UserRepository;
@@ -55,6 +57,9 @@ class OrderServiceTest {
     UserRepository userRepository;
 
     @Mock
+    ProductRepository productRepository;
+
+    @Mock
     OrderRepository orderRepository;
 
     @BeforeEach
@@ -90,66 +95,42 @@ class OrderServiceTest {
     }
 
 
-    @DisplayName("주문 아이템을 생성합니다.")
-    @Test
-    void createOrderItem() {
-        // given
-        Products product1 = ProductFixture.createProduct("상품2", 1000, 100, 0, 10);
-        Products product2 = ProductFixture.createProduct("상품3", 1000, 100, 0, 10);
-        Products product3 = ProductFixture.createProduct("상품4", 1000, 100, 0, 10);
-
-        CartItems cartItem1 = CartItemFixture.createCartItem(cart, product1, 1);
-        CartItems cartItem2 = CartItemFixture.createCartItem(cart, product2, 1);
-        CartItems cartItem3 = CartItemFixture.createCartItem(cart, product3, 1);
-
-        List<CartItems> cartItemsList = List.of(cartItem1, cartItem2, cartItem3);
-
-        given(cartItemRepository.findByIdIn(any())).willReturn(cartItemsList);
-
-        // when
-        List<Long> cartItemIdList = Arrays.asList(1L, 2L, 3L);
-        List<OrderItems> result = orderService.createOrderItem(cartItemIdList);
-
-        // then
-        assertThat(result.size()).isEqualTo(3);
-    }
-
-    @DisplayName("주문 아이템을 생성 후 상품 갯수를 차감합니다.")
+    @DisplayName("주문 생성 후 상품 갯수를 차감합니다.")
     @Test
     void decreaseQuantity() {
         // given
         Products product1 = ProductFixture.createProduct("상품2", 1000, 100, 0, 10);
+        CartItems cartItem1 = CartItemFixture.createCartItem(cart, product1, 1);
 
-        CartItems cartItem1 = CartItemFixture.createCartItem(cart, product1, 2);
-
-        List<CartItems> cartItemsList = List.of(cartItem1);
-
-        given(cartItemRepository.findByIdIn(any())).willReturn(cartItemsList);
+        given(userRepository.findById(any())).willReturn(Optional.ofNullable(user));
+        given(productRepository.findByProductId(any())).willReturn(Optional.ofNullable(product1));
+        given(cartItemRepository.findById(any())).willReturn(Optional.of(cartItem1));
 
         // when
-        List<Long> cartItemIdList = Arrays.asList(1L);
-        orderService.createOrderItem(cartItemIdList);
+        List<Long> cartItemIdList = Arrays.asList(1L, 2L);
+        orderService.createOrder(cartItemIdList, 1L);
 
         // then
         assertThat(product1.getQuantity()).isEqualTo(8);
     }
 
-    @DisplayName("주문 아이템 생성중 상품 재고 수량이 부족하면 예외가 발생됩니다.")
+    @DisplayName("주문 생성중 상품 재고 수량이 부족하면 예외가 발생됩니다.")
     @Test
     void createOrderItemException() {
         // given
-        Products product1 = ProductFixture.createProduct("상품1", 1000, 100, 0, 5);
-        CartItems cartItem1 = CartItemFixture.createCartItem(cart, product1, 6);
-        List<CartItems> cartItemsList = List.of(cartItem1);
+        Products product1 = ProductFixture.createProduct("상품2", 1000, 100, 0, 3);
+        CartItems cartItem1 = CartItemFixture.createCartItem(cart, product1, 4);
 
-        given(cartItemRepository.findByIdIn(any())).willReturn(cartItemsList);
+        given(userRepository.findById(any())).willReturn(Optional.ofNullable(user));
+        given(productRepository.findByProductId(any())).willReturn(Optional.ofNullable(product1));
+        given(cartItemRepository.findById(any())).willReturn(Optional.of(cartItem1));
 
         // when
         List<Long> cartItemIdList = List.of(1L);
 
         // then
         assertThatThrownBy(() ->
-                orderService.createOrderItem(cartItemIdList)
+                orderService.createOrder(cartItemIdList, 1L)
         )
                 .isInstanceOf(OutOfStockProductItemException.class)
                 .hasMessageContaining("재고 수량이 부족합니다.");
@@ -171,5 +152,33 @@ class OrderServiceTest {
         assertThat(orderHistoryList.getItem().get(0).getName()).isEqualTo("상품1 외 1개");
         assertThat(orderHistoryList.getItem().get(0).getTotalPrice()).isEqualTo(4500);
     }
+
+    @DisplayName("주문 취소시 주문 상태와 재고 로직을 확인합니다")
+    @Test
+    void cancelOrder() {
+        // given
+        Orders order = OrderFixture.createOrder();
+        OrderItems orderItems = order.getOrderItems().get(0);
+
+        given(orderRepository.findById(any())).willReturn(Optional.ofNullable(order));
+
+        // when
+        orderService.cancelOrder(1L);
+
+        // then
+        assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.CANCELED);
+        verify(productRepository, times(1)).increaseQuantity(orderItems.getProduct().getId(), orderItems.getQuantity());
+    }
+
+    @DisplayName("주문 동시성을 테스트 합니다")
+    @Test
+    void concurrencyOrder() {
+        // given
+
+        // when
+
+        // then
+    }
+
 
 }
