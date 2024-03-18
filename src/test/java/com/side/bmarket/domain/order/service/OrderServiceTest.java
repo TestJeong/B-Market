@@ -74,17 +74,12 @@ class OrderServiceTest {
     void createOrder() {
         // given
         Products product1 = ProductFixture.createProduct("상품2", 1000, 100, 0, 10);
-        Products product2 = ProductFixture.createProduct("상품3", 1000, 100, 0, 10);
-        Products product3 = ProductFixture.createProduct("상품4", 1000, 100, 0, 10);
-
         CartItems cartItem1 = CartItemFixture.createCartItem(cart, product1, 1);
-        CartItems cartItem2 = CartItemFixture.createCartItem(cart, product2, 1);
-        CartItems cartItem3 = CartItemFixture.createCartItem(cart, product3, 1);
 
-        List<CartItems> cartItemsList = List.of(cartItem1, cartItem2, cartItem3);
 
         given(userRepository.findById(any())).willReturn(Optional.ofNullable(user));
-        given(cartItemRepository.findByIdIn(any())).willReturn(cartItemsList);
+        given(productRepository.findByProductId(any())).willReturn(Optional.ofNullable(product1));
+        given(cartItemRepository.findById(any())).willReturn(Optional.of(cartItem1));
 
         // when
         List<Long> cartItemIdList = Arrays.asList(1L, 2L, 3L);
