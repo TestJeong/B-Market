@@ -38,5 +38,4 @@ out/
 .vscode/
 
 .env
-application-*.properties
 application-*.yml

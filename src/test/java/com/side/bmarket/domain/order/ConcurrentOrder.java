@@ -12,17 +12,18 @@ import com.side.bmarket.domain.prodcut.entity.Products;
 import com.side.bmarket.domain.prodcut.repository.ProductRepository;
 import com.side.bmarket.domain.user.entity.Users;
 import com.side.bmarket.domain.user.repository.UserRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
 
 
 @SpringBootTest
@@ -40,25 +41,27 @@ public class ConcurrentOrder {
     @Autowired
     private OrderService orderService;
 
+    private Users user;
+    private Carts cart;
+
+    @BeforeEach
+    public void setUp() {
+        Products product = productRepository.findById(1L).orElseThrow();
+        CartItems cartItem = CartItemFixture.createCartItem(cart, product, 1);
+        user = userRepository.findById(1L).orElseThrow();
+        cart = CartFixture.createCart(user);
+        cartRepository.save(cart);
+        cartItemRepository.save(cartItem);
+        productRepository.save(product);
+    }
+
     @DisplayName("주문 동시성을 테스트 합니다")
     @Test
     void test() throws InterruptedException {
         // given
-        Users user = userRepository.findById(1L)
-                .orElseThrow();
-
-        Products procut1 = productRepository.findById(1L)
-                .orElseThrow();
-
-        Carts cart = CartFixture.createCart(user);
-        cartRepository.save(cart);
-
-        CartItems cartItem1 = CartItemFixture.createCartItem(cart, procut1, 1);
-        cartItemRepository.save(cartItem1);
-
         List<Long> cartItemIdList = Arrays.asList(1L);
 
-        final int threadCount = 50;
+        final int threadCount = 99;
         final int numberOfThreads = 32; // 동시에 실행할 스레드 수
         ExecutorService executorService = Executors.newFixedThreadPool(numberOfThreads);
         CountDownLatch latch = new CountDownLatch(threadCount);
@@ -81,7 +84,7 @@ public class ConcurrentOrder {
 
         // then
         // 결과 확인, 예를 들어 생성된 주문 수를 검증
-        System.out.println("orderCount = " + productRepository.findAll().get(0).getQuantity());
+        System.out.println("orderCount = " + cart.getId());
 
     }
 
