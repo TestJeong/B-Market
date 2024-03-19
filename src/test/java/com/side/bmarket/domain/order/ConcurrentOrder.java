@@ -7,37 +7,28 @@ import com.side.bmarket.domain.cart.repository.CartItemRepository;
 import com.side.bmarket.domain.cart.repository.CartRepository;
 import com.side.bmarket.domain.cart.support.CartFixture;
 import com.side.bmarket.domain.cart.support.CartItemFixture;
-import com.side.bmarket.domain.order.repository.OrderRepository;
 import com.side.bmarket.domain.order.service.OrderService;
 import com.side.bmarket.domain.prodcut.entity.Products;
 import com.side.bmarket.domain.prodcut.repository.ProductRepository;
-import com.side.bmarket.domain.product.support.ProductFixture;
 import com.side.bmarket.domain.user.entity.Users;
 import com.side.bmarket.domain.user.repository.UserRepository;
-import com.side.bmarket.domain.user.support.UserFixture;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
-
+import org.springframework.test.context.ActiveProfiles;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
+
 
 @SpringBootTest
+@ActiveProfiles("test")
 public class ConcurrentOrder {
 
-    @Autowired
-    private OrderRepository orderRepository;
     @Autowired
     private CartItemRepository cartItemRepository;
     @Autowired
@@ -46,15 +37,8 @@ public class ConcurrentOrder {
     private ProductRepository productRepository;
     @Autowired
     private UserRepository userRepository;
-
     @Autowired
     private OrderService orderService;
-
-    @BeforeEach
-    public void setUp() {
-        // OrderService 인스턴스화
-//        orderService = new OrderService(orderRepository, cartItemRepository, productRepository, userRepository);
-    }
 
     @DisplayName("주문 동시성을 테스트 합니다")
     @Test
