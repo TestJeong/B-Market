@@ -1,6 +1,8 @@
 package com.side.bmarket.domain.order;
 
+import static org.assertj.core.api.Assertions.assertThat;
 
+import com.side.bmarket.common.jwt.TokenProvider;
 import com.side.bmarket.domain.cart.entity.CartItems;
 import com.side.bmarket.domain.cart.entity.Carts;
 import com.side.bmarket.domain.cart.repository.CartItemRepository;
@@ -17,6 +19,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Arrays;
@@ -30,6 +33,9 @@ import java.util.concurrent.Executors;
 @ActiveProfiles("test")
 public class ConcurrentOrder {
 
+    @MockBean
+    private TokenProvider tokenProvider;
+
     @Autowired
     private CartItemRepository cartItemRepository;
     @Autowired
@@ -41,27 +47,25 @@ public class ConcurrentOrder {
     @Autowired
     private OrderService orderService;
 
-    private Users user;
-    private Carts cart;
-
-    @BeforeEach
-    public void setUp() {
-        Products product = productRepository.findById(1L).orElseThrow();
-        CartItems cartItem = CartItemFixture.createCartItem(cart, product, 1);
-        user = userRepository.findById(1L).orElseThrow();
-        cart = CartFixture.createCart(user);
-        cartRepository.save(cart);
-        cartItemRepository.save(cartItem);
-        productRepository.save(product);
-    }
-
     @DisplayName("주문 동시성을 테스트 합니다")
     @Test
     void test() throws InterruptedException {
         // given
+        Users user = userRepository.findById(1L)
+                .orElseThrow();
+
+        Products procut1 = productRepository.findById(1L)
+                .orElseThrow();
+
+        Carts cart = CartFixture.createCart(user);
+        cartRepository.save(cart);
+
+        CartItems cartItem1 = CartItemFixture.createCartItem(cart, procut1, 1);
+        cartItemRepository.save(cartItem1);
+
         List<Long> cartItemIdList = Arrays.asList(1L);
 
-        final int threadCount = 99;
+        final int threadCount = 50;
         final int numberOfThreads = 32; // 동시에 실행할 스레드 수
         ExecutorService executorService = Executors.newFixedThreadPool(numberOfThreads);
         CountDownLatch latch = new CountDownLatch(threadCount);
@@ -82,10 +86,9 @@ public class ConcurrentOrder {
         latch.await(); // 모든 스레드가 완료될 때까지 대기
         executorService.shutdown(); // ExecutorService 종료
 
+        Products updateProduct = productRepository.findById(1L).orElseThrow();
+
         // then
-        // 결과 확인, 예를 들어 생성된 주문 수를 검증
-        System.out.println("orderCount = " + cart.getId());
-
+        assertThat(updateProduct.getQuantity()).isEqualTo(50);
     }
-
 }
