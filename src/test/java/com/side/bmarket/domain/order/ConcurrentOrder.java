@@ -33,9 +33,6 @@ import java.util.concurrent.Executors;
 @ActiveProfiles("test")
 public class ConcurrentOrder {
 
-    @MockBean
-    private TokenProvider tokenProvider;
-
     @Autowired
     private CartItemRepository cartItemRepository;
     @Autowired
@@ -54,13 +51,13 @@ public class ConcurrentOrder {
         Users user = userRepository.findById(1L)
                 .orElseThrow();
 
-        Products procut1 = productRepository.findById(1L)
+        Products products = productRepository.findById(1L)
                 .orElseThrow();
 
         Carts cart = CartFixture.createCart(user);
         cartRepository.save(cart);
 
-        CartItems cartItem1 = CartItemFixture.createCartItem(cart, procut1, 1);
+        CartItems cartItem1 = CartItemFixture.createCartItem(cart, products, 1);
         cartItemRepository.save(cartItem1);
 
         List<Long> cartItemIdList = Arrays.asList(1L);

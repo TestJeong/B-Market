@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.*;
 
+import com.side.bmarket.domain.cart.dto.response.CartListResponseDto;
 import com.side.bmarket.domain.cart.entity.CartItems;
 import com.side.bmarket.domain.cart.entity.Carts;
 import com.side.bmarket.domain.cart.repository.CartItemRepository;
@@ -78,13 +79,16 @@ class CartServiceTest {
     @Test
     void updateCartItemQuantity() {
         // given
-        Products product1 = ProductFixture.createProduct("상품1", 1000, 100, 0, 0);
+        Products product1 = ProductFixture.createProduct("상품1", 1000, 100, 0, 10);
         cartItem = CartItemFixture.createCartItem(cart, product1, 1);
 
-        given(cartItemRepository.findById(any())).willReturn(Optional.ofNullable(cartItem));
+        given(userRepository.findById(any())).willReturn(Optional.ofNullable(user));
+        given(cartRepository.findByUsersId(any())).willReturn(Optional.ofNullable(cart));
+        given(productRepository.findById(any())).willReturn(Optional.ofNullable(product1));
+        given(cartItemRepository.findByCartIdAndProductId(any(), any())).willReturn(Optional.ofNullable(cartItem));
 
         // when
-        cartService.updateCartItemQuantity(1L, 2);
+        cartService.saveCartItem(1L, 1L, 2);
 
         // then
         assertThat(cartItem.getProductQuantity()).isEqualTo(3);
@@ -103,13 +107,14 @@ class CartServiceTest {
         CartItems cartItem3 = CartItemFixture.createCartItem(cart, product3, 1);
 
         List<CartItems> cartItemsList = List.of(cartItem1, cartItem2, cartItem3);
+        given(cartRepository.findByUsersId(any())).willReturn(Optional.ofNullable(cart));
         given(cartItemRepository.findByCartId(any())).willReturn(cartItemsList);
 
         // when
-        int totalPrice = cartService.calculateTotalPrice(1L);
+        CartListResponseDto totalPrice = cartService.findCartItemByUser(user.getId());
 
         // then
-        assertThat(totalPrice).isEqualTo(2700);
+        assertThat(totalPrice.getTotalPrice()).isEqualTo(2700);
     }
 
 
