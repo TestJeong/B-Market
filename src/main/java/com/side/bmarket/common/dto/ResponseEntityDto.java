@@ -5,10 +5,10 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 public class ResponseEntityDto<T> {
-    private int code;
-    private HttpStatus status;
-    private String message;
-    private T data;
+    private final int code;
+    private final HttpStatus status;
+    private final String message;
+    private final T data;
 
     public ResponseEntityDto(HttpStatus status, String message, T data) {
         this.code = status.value();

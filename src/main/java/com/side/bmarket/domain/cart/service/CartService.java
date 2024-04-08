@@ -1,6 +1,5 @@
 package com.side.bmarket.domain.cart.service;
 
-import com.side.bmarket.common.config.SecurityUtil;
 import com.side.bmarket.domain.cart.dto.response.CartItemResponseDto;
 import com.side.bmarket.domain.cart.dto.response.CartListResponseDto;
 import com.side.bmarket.domain.cart.entity.CartItems;
