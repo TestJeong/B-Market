@@ -16,7 +16,7 @@
 <br />
 
 ### Swagger
-http://production.bmarketapp.com/swagger-ui/index.html
+https://production.bmarketapp.com/swagger-ui/index.html
 ##### 테스트 계정
 - userEmail : test1@naver.com
 - password : 123
@@ -29,6 +29,7 @@ http://production.bmarketapp.com/swagger-ui/index.html
 ##### **상품**
 - 상품 리스트 조회
 - 상품 상세 정보 조회
+- 상품 검색
 - 상품 정렬
 - 인기 상품 리스트 조회
 - 최대 할인 상품 리스트
