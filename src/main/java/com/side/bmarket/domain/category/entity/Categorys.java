@@ -25,7 +25,7 @@ public class Categorys extends BaseTimeEntity {
     private String categoryName;
 
     @OneToMany(mappedBy = "category")
-    @BatchSize(size = 1000)
+    @BatchSize(size = 100)
     private List<SubCategorys> subCategory = new ArrayList<>();
 
     @Builder
