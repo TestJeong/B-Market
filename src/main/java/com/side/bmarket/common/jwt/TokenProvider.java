@@ -1,7 +1,5 @@
 package com.side.bmarket.common.jwt;
 
-import com.side.bmarket.common.dto.ErrorDto;
-import com.side.bmarket.common.exception.TokenNotValidateException;
 import com.side.bmarket.domain.user.entity.Users;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
