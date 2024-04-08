@@ -2,7 +2,6 @@ package com.side.bmarket.domain.order;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.side.bmarket.common.jwt.TokenProvider;
 import com.side.bmarket.domain.cart.entity.CartItems;
 import com.side.bmarket.domain.cart.entity.Carts;
 import com.side.bmarket.domain.cart.repository.CartItemRepository;
@@ -14,12 +13,10 @@ import com.side.bmarket.domain.prodcut.entity.Products;
 import com.side.bmarket.domain.prodcut.repository.ProductRepository;
 import com.side.bmarket.domain.user.entity.Users;
 import com.side.bmarket.domain.user.repository.UserRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Arrays;
@@ -63,7 +60,7 @@ public class ConcurrentOrder {
         List<Long> cartItemIdList = Arrays.asList(1L);
 
         final int threadCount = 50;
-        final int numberOfThreads = 32; // 동시에 실행할 스레드 수
+        final int numberOfThreads = 32;
         ExecutorService executorService = Executors.newFixedThreadPool(numberOfThreads);
         CountDownLatch latch = new CountDownLatch(threadCount);
 
@@ -80,12 +77,11 @@ public class ConcurrentOrder {
             });
         }
 
-        latch.await(); // 모든 스레드가 완료될 때까지 대기
-        executorService.shutdown(); // ExecutorService 종료
-
-        Products updateProduct = productRepository.findById(1L).orElseThrow();
+        latch.await();
+        executorService.shutdown();
 
         // then
+        Products updateProduct = productRepository.findById(1L).orElseThrow();
         assertThat(updateProduct.getQuantity()).isEqualTo(50);
     }
 }

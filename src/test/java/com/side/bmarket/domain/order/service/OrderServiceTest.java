@@ -165,15 +165,4 @@ class OrderServiceTest {
         verify(productRepository, times(1)).increaseQuantity(orderItems.getProduct().getId(), orderItems.getQuantity());
     }
 
-    @DisplayName("주문 동시성을 테스트 합니다")
-    @Test
-    void concurrencyOrder() {
-        // given
-
-        // when
-
-        // then
-    }
-
-
 }

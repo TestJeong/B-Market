@@ -5,10 +5,9 @@ import com.side.bmarket.domain.user.entity.Users;
 
 public class CartFixture {
     public static Carts createCart(Users user) {
-        Carts cart = Carts.builder()
+        return Carts.builder()
                 .users(user)
                 .build();
-        return cart;
 
     }
 }
